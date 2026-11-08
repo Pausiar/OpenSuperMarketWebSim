@@ -486,9 +486,9 @@
     "semantic_hash": ""
   },
   "vite.config.ts": {
-    "mtime": 1794173728.4040658,
-    "seen": 1794173862.2827373,
-    "ast_hash": "39226141633b0529190aa6518b29e454",
+    "mtime": 1794177780.2772424,
+    "seen": 1794181596.8434787,
+    "ast_hash": "7cb0473f339e6e5090f781b043c1ccee",
     "semantic_hash": ""
   },
   ".claude/CLAUDE.md": {
@@ -2415,6 +2415,48 @@
     "mtime": 1794173989.3136458,
     "seen": 1794174445.9997513,
     "ast_hash": "c5e417072f2bc4b6f4704ac66b68d7e8",
+    "semantic_hash": ""
+  },
+  ".github/workflows/pages.yml": {
+    "mtime": 1794177780.2805367,
+    "seen": 1794181596.843325,
+    "ast_hash": "254c8d219f7a30ac1c0508f546a9c3a9",
+    "semantic_hash": ""
+  },
+  "src/ui/icons/index.tsx": {
+    "mtime": 1794181584.497059,
+    "seen": 1794181596.8434536,
+    "ast_hash": "9411e39855ee465c28c283377e441ea6",
+    "semantic_hash": ""
+  },
+  "src/ui/storeview/pixel/index.ts": {
+    "mtime": 1794181652.357063,
+    "seen": 1794181663.0246837,
+    "ast_hash": "9b9ac3308da43dfed9934ef760450ac3",
+    "semantic_hash": ""
+  },
+  "src/ui/storeview/pixel/palette.ts": {
+    "mtime": 1794181652.409063,
+    "seen": 1794181663.0246875,
+    "ast_hash": "fef2573b687706435b893e2e55e32c34",
+    "semantic_hash": ""
+  },
+  "src/ui/storeview/pixel/pixel.test.ts": {
+    "mtime": 1794181652.489063,
+    "seen": 1794181663.0246894,
+    "ast_hash": "6b28ace591b530f78fa499d95e4958d3",
+    "semantic_hash": ""
+  },
+  "src/ui/storeview/pixel/render.ts": {
+    "mtime": 1794181652.533063,
+    "seen": 1794181663.024691,
+    "ast_hash": "27d10d875f76a0fee7612e3a6415f6ae",
+    "semantic_hash": ""
+  },
+  "src/ui/storeview/pixel/sprites.ts": {
+    "mtime": 1794181705.8429148,
+    "seen": 1794181714.3320606,
+    "ast_hash": "ed1775f0a64c3b681face729b7b3163d",
     "semantic_hash": ""
   },
   "package-lock.json": {
