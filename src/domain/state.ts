@@ -104,7 +104,14 @@ export interface GameState {
   notifications: Notification[];
   stats: { days: DailyStats[]; today: DailyStats; monthly: MonthlyReport[] };
   live: HourSnapshot;
-  flags: { blackout: boolean; lastNoCashierNoticeDay?: number };
+  flags: {
+    blackout: boolean;
+    lastNoCashierNoticeDay?: number;
+    /** Días consecutivos por debajo del límite de descubierto. */
+    debtDays?: number;
+    /** Partida terminada por quiebra. */
+    gameOver?: boolean;
+  };
 }
 
 /** Contexto que reciben sistemas y comandos: estado + rng + notificaciones. */

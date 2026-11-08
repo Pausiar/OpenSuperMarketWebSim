@@ -6,6 +6,7 @@ import { employeeSystem } from './employeeSystem';
 import { eventSystem } from './eventSystem';
 import { inventorySystem } from './inventorySystem';
 import { payrollSystem } from './payrollSystem';
+import { solvencySystem } from './solvencySystem';
 import type { SimSystem } from './engine';
 
 /**
@@ -20,6 +21,7 @@ export function createSystems(): SimSystem[] {
     inventorySystem,
     eventSystem,
     billingSystem,
+    solvencySystem,
     payrollSystem,
     deliverySystem,
     customerSystem,
