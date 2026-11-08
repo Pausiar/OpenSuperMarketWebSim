@@ -14,6 +14,8 @@ export interface SaveMeta {
   day: number;
   balanceCents: number;
   level: number;
+  /** Versión del formato con el que se guardó. Ausente en índices anteriores (v1). */
+  saveVersion?: number;
 }
 
 const hourSnapshotSchema = z.looseObject({
@@ -145,6 +147,7 @@ export function saveGame(state: GameState, id?: string): string {
     day: dayOf(state.clock.timeMin),
     balanceCents: state.ledger.balanceCents,
     level: state.store.level,
+    saveVersion: CURRENT_SAVE_VERSION,
   };
   const index = readIndex().filter((m) => m.id !== saveId);
   index.push(meta);

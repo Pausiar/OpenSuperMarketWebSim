@@ -20,7 +20,6 @@ export function MainMenu() {
           <h1>Supermarket Tycoon</h1>
           <p>Gestiona tu supermercado: compras, precios, personal, facturas y expansión.</p>
         </div>
-        <ErrorBox message={error} />
 
         <Card title="Nueva partida">
           <div className="form-row">
@@ -43,6 +42,11 @@ export function MainMenu() {
 
         {saves.length > 0 && (
           <Card title="Continuar partida">
+            {error && (
+              <div role="alert" style={{ marginBottom: 10 }}>
+                <ErrorBox message={error} />
+              </div>
+            )}
             {saves.map((s) => (
               <div
                 key={s.id}
@@ -58,17 +62,23 @@ export function MainMenu() {
                   <strong>{s.name}</strong>
                   <div className="dim" style={{ fontSize: 12 }}>
                     Día {s.day + 1} · Nivel {s.level} · {money(s.balanceCents)} ·{' '}
-                    {new Date(s.savedAt).toLocaleString('es-ES')}
+                    {new Date(s.savedAt).toLocaleString('es-ES')} · Guardado v{s.saveVersion ?? 1}
                   </div>
                 </div>
                 <div style={{ display: 'flex', gap: 6 }}>
-                  <button className="small primary" onClick={() => setError(loadGame(s.id))}>
+                  <button
+                    className="small primary"
+                    onClick={() => setError(loadGame(s.id))}
+                    aria-label={`Cargar ${s.name}`}
+                  >
                     Cargar
                   </button>
                   <button
                     className="small danger"
+                    aria-label={`Borrar ${s.name}`}
                     onClick={() => {
                       deleteGame(s.id);
+                      setError(null);
                       forceRefresh((n) => n + 1);
                     }}
                   >

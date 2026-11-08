@@ -144,9 +144,9 @@
     "semantic_hash": ""
   },
   "src/App.tsx": {
-    "mtime": 1794173728.4018555,
-    "seen": 1794173862.2826736,
-    "ast_hash": "c02e38b6136405465516c0dd503ed556",
+    "mtime": 1794174630.4536839,
+    "seen": 1794174945.3227355,
+    "ast_hash": "b870ce4a5517661ba476049742a67c0c",
     "semantic_hash": ""
   },
   "src/core/rng.ts": {
@@ -300,9 +300,9 @@
     "semantic_hash": ""
   },
   "src/persistence/saveRepo.ts": {
-    "mtime": 1794173974.6840994,
-    "seen": 1794173991.9433286,
-    "ast_hash": "270c76ac27810613050a17a136205ae4",
+    "mtime": 1794174638.3748486,
+    "seen": 1794174945.3227851,
+    "ast_hash": "6b533a44f508d44c59b4d81fd20fb066",
     "semantic_hash": ""
   },
   "src/sim/accountingSystem.ts": {
@@ -384,15 +384,15 @@
     "semantic_hash": ""
   },
   "src/ui/MainMenu.tsx": {
-    "mtime": 1794173728.4033835,
-    "seen": 1794173862.28272,
-    "ast_hash": "84aab069fd0cb6462f6c2bf1c348c127",
+    "mtime": 1794174630.5096838,
+    "seen": 1794174945.322814,
+    "ast_hash": "a354095b496e12e7bda333a06d8ea454",
     "semantic_hash": ""
   },
   "src/ui/components.tsx": {
-    "mtime": 1794173728.4039364,
-    "seen": 1794173862.282721,
-    "ast_hash": "db04786e7f21ca1cf688bc8ea2dc75d5",
+    "mtime": 1794174630.497684,
+    "seen": 1794174945.3228166,
+    "ast_hash": "7e91abb27cbf4cfb4493c091b668d6ad",
     "semantic_hash": ""
   },
   "src/ui/format.ts": {
@@ -1986,9 +1986,9 @@
     "semantic_hash": ""
   },
   "README.md": {
-    "mtime": 1794173728.4007876,
-    "seen": 1794173862.2829778,
-    "ast_hash": "272563b68f489236a1207d9ce8a78f24",
+    "mtime": 1794174605.4776824,
+    "seen": 1794174614.871216,
+    "ast_hash": "fffa571f3c2381757909b3d22355272c",
     "semantic_hash": ""
   },
   "index.html": {
@@ -2334,15 +2334,15 @@
     "semantic_hash": ""
   },
   "src/domain/tutorial.test.ts": {
-    "mtime": 1794174437.1292095,
-    "seen": 1794174445.999694,
-    "ast_hash": "8310f11b1d7550ab1e8beac9cbf34c6b",
+    "mtime": 1794174448.197673,
+    "seen": 1794174614.8707664,
+    "ast_hash": "d3342e08b8f35bd7c537e776d5a48455",
     "semantic_hash": ""
   },
   "src/domain/tutorial.ts": {
-    "mtime": 1794174428.2558303,
-    "seen": 1794174445.9996955,
-    "ast_hash": "552366ebfb3f8bf1dbf7b8dc04cb3761",
+    "mtime": 1794174448.2296731,
+    "seen": 1794174614.8707678,
+    "ast_hash": "d11ce4c1e2b140072b607bda9269689b",
     "semantic_hash": ""
   },
   "src/sim/balance.test.ts": {
@@ -2382,15 +2382,15 @@
     "semantic_hash": ""
   },
   "src/ui/GameOverModal.tsx": {
-    "mtime": 1794174104.9711435,
-    "seen": 1794174445.9997272,
-    "ast_hash": "8590877eea316a3c54d11690f279342a",
+    "mtime": 1794174630.521684,
+    "seen": 1794174945.3228123,
+    "ast_hash": "d2ec724da2a211ae1477de9b73c378d3",
     "semantic_hash": ""
   },
   "src/ui/TutorialPanel.tsx": {
-    "mtime": 1794174437.1294081,
-    "seen": 1794174445.99973,
-    "ast_hash": "c083c33a1259e78fc47755303259a2ef",
+    "mtime": 1794174448.273673,
+    "seen": 1794174614.8708005,
+    "ast_hash": "6cb372d34cb8e3755f8bbf78bfc1f8ca",
     "semantic_hash": ""
   },
   "src/ui/storeview/StoreCanvas.tsx": {
