@@ -53,3 +53,35 @@ depender de `setInterval` por sistema: hay un único driver que alimenta el relo
   la puerta gestionan peor las colas, salas saturadas reducen la satisfacción.
 - **Consecuencias**: facturas impagadas generan recargo y corte de luz; sin frío se estropea el
   género; plantilla desmotivada renuncia; sin seguridad hay robos.
+
+## Quiebra y fin de partida
+
+- **Descubierto**: si el saldo baja de −1.000 €, el día cuenta como día en deuda. Aparecen avisos
+  los días 10 y 20 seguidos en números rojos.
+- **Quiebra** (fin de la partida) en cuanto ocurre cualquiera de estas dos cosas:
+  30 días seguidos en descubierto, o 3 facturas vencidas sin pagar.
+- Al quebrar, la simulación se detiene (velocidad 0) y aparece un diálogo con el resumen
+  (días jugados, saldo final, días en deuda, facturas vencidas). Desde ahí puedes empezar una
+  nueva partida o volver al menú. La partida queda guardada con su estado final.
+
+## Guía de inicio
+
+Durante la partida, un panel de «Primeros pasos» muestra seis pasos: contratar a un cajero,
+hacer un pedido, ajustar un precio, abrir turnos, dejar correr un día y leer el informe. Los
+pasos se detectan a partir del estado de la partida; el último se marca a mano. El panel se
+puede plegar o ocultar, y esa preferencia se guarda en el navegador de cada partida.
+
+## Capa visual
+
+La tienda en vivo (panel de inicio y pantalla de tienda) es una vista de solo lectura en
+`<canvas>` que dibuja el plano 2D y figurantes de ambiente a partir de la instantánea horaria
+(`live`). Usa su propio generador de números aleatorios: no altera la simulación ni las
+partidas guardadas. Durante un apagón la vista se oscurece y muestra la etiqueta APAGÓN.
+
+## Guardado (versión 2)
+
+- Las partidas se guardan en `localStorage` con `saveVersion: 2`. La versión 2 añade la
+  instantánea `live` de la última hora simulada.
+- Las partidas v1 se migran automáticamente al cargarlas. Partidas de una versión posterior o
+  con datos inválidos no se cargan y el menú muestra el motivo.
+- El menú indica la versión de cada partida guardada.

@@ -5,7 +5,8 @@ import { PRODUCTS } from './data/products';
 import { generateApplicant, refreshApplicants, type Employee } from './employees';
 import { addLot } from './inventory';
 import { autoPlace, createMap } from './map';
-import { emptyDailyStats, newId, type GameState } from './state';
+import { CURRENT_SAVE_VERSION } from '../persistence/saveRepo';
+import { emptyDailyStats, emptyHourSnapshot, newId, type GameState } from './state';
 import type { EquipmentInstance } from './storeOps';
 
 const STARTING_BALANCE_CENTS = 2_500_000; // 25.000 €
@@ -15,7 +16,7 @@ export function createNewGame(gameName: string, seed: number): GameState {
   const rng = new Rng(seed);
 
   const state: GameState = {
-    saveVersion: 1,
+    saveVersion: CURRENT_SAVE_VERSION,
     meta: { gameName, createdAt: Date.now(), nextId: 1 },
     seed,
     rngState: seed,
@@ -46,6 +47,7 @@ export function createNewGame(gameName: string, seed: number): GameState {
     modifiers: [],
     notifications: [],
     stats: { days: [], today: emptyDailyStats(0), monthly: [] },
+    live: emptyHourSnapshot(),
     flags: { blackout: false },
   };
 
