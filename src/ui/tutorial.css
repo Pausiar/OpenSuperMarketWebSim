@@ -1,76 +1,82 @@
+/* Hallmark · shape: app screen · genre: playful · theme: custom · tokens live in index.css
+ * paper: oklch(16.5% 0.012 60) · accent: oklch(66% 0.19 30) · display: ui-rounded · body: system-ui · contrast: pass · v2.0.0 */
 .tut {
   background: var(--bg-panel);
   border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding: 12px 16px;
+  border-radius: var(--r-3);
+  padding: var(--sp-3) var(--sp-4);
+  box-shadow: var(--shadow-card);
 }
 .tut-head {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--sp-3);
 }
 .tut-toggle {
   all: unset;
   flex: 1;
   display: flex;
   align-items: baseline;
-  gap: 10px;
+  gap: var(--sp-3);
   cursor: pointer;
-  border-radius: 6px;
+  border-radius: var(--r-2);
+  min-height: var(--control-h);
+  align-items: center;
 }
 .tut-toggle:focus-visible,
 .tut-go:focus-visible,
 .tut-close:focus-visible {
-  outline: 2px solid var(--accent-2);
+  outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
 .tut-title {
-  font-weight: 600;
-  font-size: 14px;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-md);
 }
 .tut-count {
   color: var(--text-dim);
-  font-size: 12px;
+  font-size: var(--text-sm);
   font-variant-numeric: tabular-nums;
 }
 .tut-bar {
-  height: 3px;
-  margin-top: 10px;
+  height: 4px;
+  margin-top: var(--sp-2);
   background: var(--border);
-  border-radius: 2px;
+  border-radius: var(--r-1);
   overflow: hidden;
 }
 .tut-bar > span {
   display: block;
   height: 100%;
   background: var(--accent);
-  transition: width 0.3s ease;
 }
 .tut-close {
   all: unset;
   cursor: pointer;
   color: var(--text-dim);
-  font-size: 12px;
-  padding: 2px 6px;
-  border-radius: 6px;
+  font-size: var(--text-sm);
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--r-2);
 }
 .tut-close:hover {
   color: var(--text);
+  background: var(--bg-hover);
 }
 .tut-list {
   list-style: none;
-  margin: 12px 0 0;
+  margin: var(--sp-3) 0 0;
   padding: 0;
   display: grid;
-  gap: 2px;
+  gap: 0;
 }
 .tut-step {
   display: grid;
-  grid-template-columns: 20px 1fr auto;
-  gap: 10px;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  gap: var(--sp-3);
   align-items: start;
-  padding: 8px 0;
-  border-top: 1px solid var(--border);
+  padding: var(--sp-2) 0;
+  border-top: 1px solid var(--border-soft);
 }
 .tut-step:first-child {
   border-top: 0;
@@ -80,7 +86,7 @@
   height: 16px;
   margin-top: 2px;
   border-radius: 50%;
-  border: 1.5px solid var(--text-dim);
+  border: 2px solid var(--text-dim);
   display: grid;
   place-items: center;
   font-size: 10px;
@@ -96,7 +102,10 @@
   border-color: var(--accent);
 }
 .tut-name {
-  font-size: 13px;
+  font-size: var(--text-md);
+}
+.tut-step.current .tut-name {
+  font-weight: 650;
 }
 .tut-step.done .tut-name {
   color: var(--text-dim);
@@ -104,23 +113,24 @@
 }
 .tut-hint {
   margin: 2px 0 0;
-  font-size: 12px;
+  font-size: var(--text-sm);
   color: var(--text-dim);
 }
 .tut-go {
   all: unset;
   cursor: pointer;
-  font-size: 12px;
+  font-size: var(--text-sm);
+  font-weight: 650;
   color: var(--accent-2);
-  padding: 2px 6px;
-  border-radius: 6px;
+  padding: var(--sp-1) var(--sp-2);
+  border-radius: var(--r-2);
 }
 .tut-go:hover {
   background: var(--bg-hover);
 }
 .tut-done {
-  margin: 12px 0 0;
-  font-size: 13px;
+  margin: var(--sp-3) 0 0;
+  font-size: var(--text-sm);
   color: var(--green);
 }
 .tut-sr {
