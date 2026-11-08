@@ -1,0 +1,133 @@
+.tut {
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 16px;
+}
+.tut-head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.tut-toggle {
+  all: unset;
+  flex: 1;
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.tut-toggle:focus-visible,
+.tut-go:focus-visible,
+.tut-close:focus-visible {
+  outline: 2px solid var(--accent-2);
+  outline-offset: 2px;
+}
+.tut-title {
+  font-weight: 600;
+  font-size: 14px;
+}
+.tut-count {
+  color: var(--text-dim);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.tut-bar {
+  height: 3px;
+  margin-top: 10px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.tut-bar > span {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.3s ease;
+}
+.tut-close {
+  all: unset;
+  cursor: pointer;
+  color: var(--text-dim);
+  font-size: 12px;
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.tut-close:hover {
+  color: var(--text);
+}
+.tut-list {
+  list-style: none;
+  margin: 12px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+.tut-step {
+  display: grid;
+  grid-template-columns: 20px 1fr auto;
+  gap: 10px;
+  align-items: start;
+  padding: 8px 0;
+  border-top: 1px solid var(--border);
+}
+.tut-step:first-child {
+  border-top: 0;
+}
+.tut-mark {
+  width: 16px;
+  height: 16px;
+  margin-top: 2px;
+  border-radius: 50%;
+  border: 1.5px solid var(--text-dim);
+  display: grid;
+  place-items: center;
+  font-size: 10px;
+  line-height: 1;
+  color: transparent;
+}
+.tut-step.done .tut-mark {
+  background: var(--green);
+  border-color: var(--green);
+  color: var(--bg);
+}
+.tut-step.current .tut-mark {
+  border-color: var(--accent);
+}
+.tut-name {
+  font-size: 13px;
+}
+.tut-step.done .tut-name {
+  color: var(--text-dim);
+  text-decoration: line-through;
+}
+.tut-hint {
+  margin: 2px 0 0;
+  font-size: 12px;
+  color: var(--text-dim);
+}
+.tut-go {
+  all: unset;
+  cursor: pointer;
+  font-size: 12px;
+  color: var(--accent-2);
+  padding: 2px 6px;
+  border-radius: 6px;
+}
+.tut-go:hover {
+  background: var(--bg-hover);
+}
+.tut-done {
+  margin: 12px 0 0;
+  font-size: 13px;
+  color: var(--green);
+}
+.tut-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
