@@ -25,7 +25,10 @@ import {
 } from '../../domain/storeOps';
 import { Badge, Card, ErrorBox, Stat } from '../components';
 import { money, pct } from '../format';
+import { StoreCanvas } from '../storeview/StoreCanvas';
 import { useGame } from '../useGame';
+
+type MapView = 'live' | 'edit';
 
 const TYPE_LABEL: Record<EquipmentType, string> = {
   shelf: 'EST',
@@ -37,6 +40,7 @@ const TYPE_LABEL: Record<EquipmentType, string> = {
 export function StoreScreen() {
   const { state, run } = useGame();
   const [error, setError] = useState<string | null>(null);
+  const [mapView, setMapView] = useState<MapView>('live');
   const level = levelDef(state.store.level);
   const next = state.store.level < STORE_LEVELS.length ? STORE_LEVELS[state.store.level] : null;
   const today = dayOf(state.clock.timeMin);
@@ -192,7 +196,27 @@ export function StoreScreen() {
         </table>
       </Card>
 
-      <Card title="Distribución de la sala (mapa)">
+      <Card
+        title="Distribución de la sala (mapa)"
+        actions={
+          <div style={{ display: 'flex', gap: 6 }}>
+            <button
+              className={`small ${mapView === 'live' ? 'primary' : ''}`}
+              aria-pressed={mapView === 'live'}
+              onClick={() => setMapView('live')}
+            >
+              Vista en vivo
+            </button>
+            <button
+              className={`small ${mapView === 'edit' ? 'primary' : ''}`}
+              aria-pressed={mapView === 'edit'}
+              onClick={() => setMapView('edit')}
+            >
+              Editar
+            </button>
+          </div>
+        }
+      >
         <div className="grid cols-3" style={{ marginBottom: 12 }}>
           <Stat
             label="Eficiencia de reposición"
@@ -213,7 +237,17 @@ export function StoreScreen() {
             tone={effects.circulationFactor < 1 ? 'warn' : 'good'}
           />
         </div>
-        <MapEditor onError={setError} />
+        {mapView === 'live' ? (
+          <StoreCanvas
+            map={state.map}
+            equipment={state.store.equipment}
+            live={state.live}
+            blackout={state.flags.blackout}
+            speed={state.clock.speed}
+          />
+        ) : (
+          <MapEditor onError={setError} />
+        )}
       </Card>
     </div>
   );

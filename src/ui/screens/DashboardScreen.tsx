@@ -7,6 +7,7 @@ import { levelDef } from '../../domain/data/levels';
 import { useGameStore } from '../../state/gameStore';
 import { Badge, Card, Stat } from '../components';
 import { money, num } from '../format';
+import { StoreCanvas } from '../storeview/StoreCanvas';
 import { useGame } from '../useGame';
 
 export function DashboardScreen() {
@@ -154,6 +155,18 @@ export function DashboardScreen() {
           </div>
         </Card>
       </div>
+
+      <Card title="Tienda en vivo">
+        <div style={{ maxWidth: 480 }}>
+          <StoreCanvas
+            map={state.map}
+            equipment={state.store.equipment}
+            live={state.live}
+            blackout={state.flags.blackout}
+            speed={state.clock.speed}
+          />
+        </div>
+      </Card>
 
       <Card title="Últimos 14 días">
         <DailyChart />
