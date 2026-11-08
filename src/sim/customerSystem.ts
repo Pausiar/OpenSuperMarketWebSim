@@ -4,7 +4,7 @@ import { record } from '../domain/economy';
 import { effectiveProductivity, onDutyAt } from '../domain/employees';
 import { consumeStock, stockOf } from '../domain/inventory';
 import { layoutEffects } from '../domain/map';
-import { demandFactor, type SimCtx } from '../domain/state';
+import { demandFactor, emptyHourSnapshot, type SimCtx } from '../domain/state';
 import { campaignBoost } from '../domain/storeOps';
 import { levelDef } from '../domain/data/levels';
 import type { SimSystem } from './engine';
@@ -53,11 +53,16 @@ function simulateHour(ctx: SimCtx, hour: number): void {
       0.15,
     ),
   );
+  const live = emptyHourSnapshot(hour);
+  live.potential = Math.max(0, potential);
+  state.live = live;
   if (potential <= 0) return;
 
   if (state.flags.blackout) {
     stats.customers += potential;
     stats.lost += potential;
+    live.lost = potential;
+    live.queueEstimate = potential;
     return;
   }
 
@@ -68,10 +73,16 @@ function simulateHour(ctx: SimCtx, hour: number): void {
   ).length;
   const openCheckouts = Math.min(cashiersOnDuty, workingCheckouts);
 
+  live.openCheckouts = openCheckouts;
+  live.cashierIds = onDuty.filter((e) => e.role === 'cashier').map((e) => e.id);
+  live.stockerPresent = onDuty.some((e) => e.role === 'stocker');
+  live.securityPresent = onDuty.some((e) => e.role === 'security');
   stats.customers += potential;
 
   if (openCheckouts === 0) {
     stats.lost += potential;
+    live.lost = potential;
+    live.queueEstimate = potential;
     if (state.flags.lastNoCashierNoticeDay !== today) {
       state.flags.lastNoCashierNoticeDay = today;
       ctx.notify(
@@ -95,6 +106,9 @@ function simulateHour(ctx: SimCtx, hour: number): void {
   const lost = potential - served;
   stats.served += served;
   stats.lost += lost;
+  live.served = served;
+  live.lost = lost;
+  live.queueEstimate = lost;
 
   // Disponibilidad de producto: reponedores presentes + distancia al almacén.
   const stockerPresent = onDuty.some((e) => e.role === 'stocker');
@@ -181,5 +195,6 @@ export const customerSystem: SimSystem = {
   id: 'customers',
   onHour(ctx, hour) {
     if (isCustomerHour(hour)) simulateHour(ctx, hour);
+    else ctx.state.live = emptyHourSnapshot(hour);
   },
 };

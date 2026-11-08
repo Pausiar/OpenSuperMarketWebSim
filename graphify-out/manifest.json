@@ -252,9 +252,9 @@
     "semantic_hash": ""
   },
   "src/domain/newGame.ts": {
-    "mtime": 1794173728.402201,
-    "seen": 1794173862.2826936,
-    "ast_hash": "3d41297cfaee3cd95ddd608ec23d42cb",
+    "mtime": 1794173957.587609,
+    "seen": 1794173991.9432685,
+    "ast_hash": "24ef1168c5fde2a824b7ba0704fb1af0",
     "semantic_hash": ""
   },
   "src/domain/orders.test.ts": {
@@ -282,9 +282,9 @@
     "semantic_hash": ""
   },
   "src/domain/state.ts": {
-    "mtime": 1794173728.402201,
-    "seen": 1794173862.2827013,
-    "ast_hash": "c40005a929cf67dd4fbc25417bcb686a",
+    "mtime": 1794173957.5872066,
+    "seen": 1794173991.9433157,
+    "ast_hash": "dc8a5bf137a8184cd7dd543755e405a7",
     "semantic_hash": ""
   },
   "src/domain/storeOps.ts": {
@@ -300,9 +300,9 @@
     "semantic_hash": ""
   },
   "src/persistence/saveRepo.ts": {
-    "mtime": 1794173728.402201,
-    "seen": 1794173862.2827046,
-    "ast_hash": "5d82673c0fe492282fe9e29c28197154",
+    "mtime": 1794173974.6840994,
+    "seen": 1794173991.9433286,
+    "ast_hash": "270c76ac27810613050a17a136205ae4",
     "semantic_hash": ""
   },
   "src/sim/accountingSystem.ts": {
@@ -318,9 +318,9 @@
     "semantic_hash": ""
   },
   "src/sim/customerSystem.ts": {
-    "mtime": 1794173728.4033835,
-    "seen": 1794173862.2827084,
-    "ast_hash": "2e5da6e4d4de240b8525bbb69ad6d321",
+    "mtime": 1794173957.587941,
+    "seen": 1794173991.943336,
+    "ast_hash": "f765ff5ccabbb144f53861007bd2b262",
     "semantic_hash": ""
   },
   "src/sim/deliverySystem.ts": {
@@ -2307,6 +2307,18 @@
     "mtime": 1794173728.4018555,
     "seen": 1794173862.2830303,
     "ast_hash": "3b4fcfcf393eca4d264dca4a4663bc37",
+    "semantic_hash": ""
+  },
+  "src/persistence/saveRepo.test.ts": {
+    "mtime": 1794173984.1215653,
+    "seen": 1794173991.9433253,
+    "ast_hash": "c8baabbadb70a133d2d822a089ad40af",
+    "semantic_hash": ""
+  },
+  "src/ui/storeview/geometry.ts": {
+    "mtime": 1794173980.0576453,
+    "seen": 1794173991.9433866,
+    "ast_hash": "5e1f70f18cd3c37b856a24fd6aedf3cb",
     "semantic_hash": ""
   },
   "package-lock.json": {

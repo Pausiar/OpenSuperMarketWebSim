@@ -57,6 +57,32 @@ export interface ActiveModifier {
   supplierId?: string;
 }
 
+export interface HourSnapshot {
+  hour: number;
+  potential: number;
+  served: number;
+  lost: number;
+  openCheckouts: number;
+  cashierIds: string[];
+  queueEstimate: number;
+  stockerPresent: boolean;
+  securityPresent: boolean;
+}
+
+export function emptyHourSnapshot(hour = 0): HourSnapshot {
+  return {
+    hour,
+    potential: 0,
+    served: 0,
+    lost: 0,
+    openCheckouts: 0,
+    cashierIds: [],
+    queueEstimate: 0,
+    stockerPresent: false,
+    securityPresent: false,
+  };
+}
+
 export interface GameState {
   saveVersion: number;
   meta: { gameName: string; createdAt: number; nextId: number };
@@ -77,6 +103,7 @@ export interface GameState {
   modifiers: ActiveModifier[];
   notifications: Notification[];
   stats: { days: DailyStats[]; today: DailyStats; monthly: MonthlyReport[] };
+  live: HourSnapshot;
   flags: { blackout: boolean; lastNoCashierNoticeDay?: number };
 }
 

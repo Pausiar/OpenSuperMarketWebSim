@@ -2,7 +2,7 @@ import { z } from 'zod';
 import { dayOf } from '../core/time';
 import type { GameState } from '../domain/state';
 
-export const CURRENT_SAVE_VERSION = 1;
+export const CURRENT_SAVE_VERSION = 2;
 
 const SAVE_INDEX_KEY = 'smt:save-index';
 const SAVE_PREFIX = 'smt:save:';
@@ -16,35 +16,106 @@ export interface SaveMeta {
   level: number;
 }
 
-// Validación estructural mínima al cargar. Los campos desconocidos se conservan.
+const hourSnapshotSchema = z.looseObject({
+  hour: z.number(),
+  potential: z.number(),
+  served: z.number(),
+  lost: z.number(),
+  openCheckouts: z.number(),
+  cashierIds: z.array(z.string()),
+  queueEstimate: z.number(),
+  stockerPresent: z.boolean(),
+  securityPresent: z.boolean(),
+});
+
+const productSchema = z.looseObject({
+  sellingPriceCents: z.number(),
+  active: z.boolean(),
+  minStock: z.number(),
+});
+
+const placementSchema = z.looseObject({
+  equipmentId: z.string(),
+  x: z.number().int(),
+  y: z.number().int(),
+  rot: z.union([z.literal(0), z.literal(1)]),
+});
+
+const equipmentSchema = z.looseObject({
+  id: z.string(),
+  type: z.string(),
+  broken: z.boolean(),
+});
+
+// Validación estructural al cargar. Los campos desconocidos se conservan.
 const stateSchema = z.looseObject({
-  saveVersion: z.number(),
-  meta: z.looseObject({ gameName: z.string(), nextId: z.number() }),
+  saveVersion: z.literal(CURRENT_SAVE_VERSION),
+  meta: z.looseObject({
+    gameName: z.string(),
+    createdAt: z.number(),
+    nextId: z.number().int().min(1),
+  }),
   seed: z.number(),
   rngState: z.number(),
-  clock: z.looseObject({ timeMin: z.number(), speed: z.number() }),
+  clock: z.looseObject({
+    timeMin: z.number().min(0),
+    speed: z.union([z.literal(0), z.literal(1), z.literal(2), z.literal(5), z.literal(10)]),
+  }),
   ledger: z.looseObject({ balanceCents: z.number(), transactions: z.array(z.unknown()) }),
   bills: z.array(z.unknown()),
   loans: z.array(z.unknown()),
-  products: z.record(z.string(), z.unknown()),
+  products: z.record(z.string(), productSchema),
   lots: z.array(z.unknown()),
   orders: z.array(z.unknown()),
   employees: z.array(z.unknown()),
   applicants: z.array(z.unknown()),
   shifts: z.array(z.unknown()),
-  store: z.looseObject({ level: z.number(), equipment: z.array(z.unknown()) }),
-  map: z.looseObject({ w: z.number(), h: z.number(), placements: z.array(z.unknown()) }),
+  store: z.looseObject({
+    level: z.number().int().min(1),
+    reputation: z.number(),
+    satisfaction: z.number(),
+    cleanliness: z.number(),
+    equipment: z.array(equipmentSchema),
+    campaigns: z.array(z.unknown()),
+  }),
+  map: z.looseObject({
+    w: z.number().int().positive(),
+    h: z.number().int().positive(),
+    placements: z.array(placementSchema),
+  }),
   stats: z.looseObject({ days: z.array(z.unknown()) }),
+  live: hourSnapshotSchema,
   flags: z.looseObject({ blackout: z.boolean() }),
 });
 
-/** Punto de extensión para migraciones entre versiones de guardado. */
-function migrate(raw: { saveVersion: number }): unknown {
-  if (raw.saveVersion > CURRENT_SAVE_VERSION) {
+/** Migra un guardado crudo hasta CURRENT_SAVE_VERSION. */
+function migrate(raw: Record<string, unknown>): unknown {
+  const version = raw.saveVersion;
+  if (typeof version !== 'number' || !Number.isInteger(version) || version < 1) {
+    throw new Error('La partida guardada está corrupta o es incompatible.');
+  }
+  if (version > CURRENT_SAVE_VERSION) {
     throw new Error('La partida fue guardada con una versión más reciente del juego.');
   }
-  // Futuras migraciones: if (raw.saveVersion === 1) { ...; raw.saveVersion = 2; }
-  return raw;
+  let current = raw;
+  if (version === 1) {
+    current = {
+      ...current,
+      saveVersion: 2,
+      live: {
+        hour: 0,
+        potential: 0,
+        served: 0,
+        lost: 0,
+        openCheckouts: 0,
+        cashierIds: [],
+        queueEstimate: 0,
+        stockerPresent: false,
+        securityPresent: false,
+      },
+    };
+  }
+  return current;
 }
 
 function readIndex(): SaveMeta[] {
@@ -84,8 +155,16 @@ export function saveGame(state: GameState, id?: string): string {
 export function loadGame(id: string): GameState {
   const raw = localStorage.getItem(SAVE_PREFIX + id);
   if (!raw) throw new Error('Partida no encontrada.');
-  const parsed = JSON.parse(raw) as { saveVersion: number };
-  const migrated = migrate(parsed);
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(raw);
+  } catch {
+    throw new Error('La partida guardada está corrupta o es incompatible.');
+  }
+  if (typeof parsed !== 'object' || parsed === null || Array.isArray(parsed)) {
+    throw new Error('La partida guardada está corrupta o es incompatible.');
+  }
+  const migrated = migrate(parsed as Record<string, unknown>);
   const result = stateSchema.safeParse(migrated);
   if (!result.success) {
     throw new Error('La partida guardada está corrupta o es incompatible.');
