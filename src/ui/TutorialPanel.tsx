@@ -8,6 +8,7 @@ import {
   saveProgress,
   type TutorialProgress,
 } from "../domain/tutorial";
+import { CheckIcon } from "./icons";
 import "./tutorial.css";
 
 export interface TutorialPanelProps {
@@ -87,7 +88,7 @@ export function TutorialPanel({
                 className={`tut-step${done[i] ? " done" : ""}${i === currentIdx ? " current" : ""}`}
               >
                 <span className="tut-mark" aria-hidden="true">
-                  ✓
+                  <CheckIcon size={12} strokeWidth={3} />
                 </span>
                 <div>
                   <div className="tut-name">

@@ -1,0 +1,56 @@
+/* Fin de partida (GameOverModal). Usa el marco .modal de index.css y añade el contenido. Solo tokens. */
+
+.gameover {
+  display: grid;
+  gap: var(--sp-4);
+}
+.gameover-title {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  margin: 0;
+  color: var(--red);
+  font-size: var(--text-xl);
+}
+.gameover-icon {
+  flex-shrink: 0;
+}
+.gameover-desc {
+  color: var(--text);
+}
+.gameover-desc p {
+  margin: 0;
+  color: var(--text-dim);
+}
+.gameover-stats {
+  list-style: none;
+  margin: var(--sp-3) 0 0;
+  padding: 0;
+  color: var(--text);
+  line-height: var(--lh-body);
+  border-top: 1px solid var(--border-soft);
+}
+.gameover-stats li {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--sp-3);
+  padding: var(--sp-2) 0;
+  border-bottom: 1px solid var(--border-soft);
+}
+.gameover-stats span {
+  color: var(--text-dim);
+}
+.gameover-stats strong {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+.gameover .modal-actions {
+  margin-top: var(--sp-2);
+}
+.gameover .modal-actions button {
+  flex: 1 1 auto;
+}
