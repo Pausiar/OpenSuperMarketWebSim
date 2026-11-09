@@ -1,10 +1,11 @@
-import { useState } from 'react';
-import { dayOf } from '../../core/time';
-import { listSaves, deleteGame } from '../../persistence/saveRepo';
-import { useGameStore } from '../../state/gameStore';
-import { Card, ErrorBox } from '../components';
-import { money } from '../format';
-import { useGame } from '../useGame';
+import { useState } from "react";
+import { dayOf } from "../../core/time";
+import { listSaves, deleteGame } from "../../persistence/saveRepo";
+import { useGameStore } from "../../state/gameStore";
+import { Card, ErrorBox } from "../components";
+import { money } from "../format";
+import { CheckIcon } from "../icons";
+import { useGame } from "../useGame";
 
 export function SettingsScreen() {
   const { state } = useGame();
@@ -25,14 +26,15 @@ export function SettingsScreen() {
 
       <Card title="Partida actual">
         <p>
-          <strong>{state.meta.gameName}</strong> · Día {dayOf(state.clock.timeMin) + 1} ·{' '}
-          {money(state.ledger.balanceCents)} · semilla {state.seed}
+          <strong>{state.meta.gameName}</strong> · Día{" "}
+          {dayOf(state.clock.timeMin) + 1} · {money(state.ledger.balanceCents)}{" "}
+          · semilla {state.seed}
         </p>
-        <p className="dim" style={{ fontSize: 12.5 }}>
-          La partida se guarda automáticamente al empezar cada día. Versión de guardado:{' '}
-          {state.saveVersion}.
+        <p className="dim t-small">
+          La partida se guarda automáticamente al empezar cada día. Versión de
+          guardado: {state.saveVersion}.
         </p>
-        <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+        <div className="row">
           <button
             className="primary"
             onClick={() => {
@@ -45,7 +47,9 @@ export function SettingsScreen() {
           </button>
           <button onClick={quitToMenu}>Guardar y salir al menú</button>
           {savedMsg && (
-            <span style={{ color: 'var(--green)', alignSelf: 'center' }}>Partida guardada ✓</span>
+            <span className="row t-good">
+              <CheckIcon size={16} /> Partida guardada
+            </span>
           )}
         </div>
       </Card>
@@ -63,7 +67,10 @@ export function SettingsScreen() {
           </thead>
           <tbody>
             {saves.map((s) => (
-              <tr key={s.id} style={{ fontWeight: s.id === saveId ? 600 : undefined }}>
+              <tr
+                key={s.id}
+                className={s.id === saveId ? "is-strong" : undefined}
+              >
                 <td>
                   {s.name}
                   {s.id === saveId && <span className="dim"> (actual)</span>}
@@ -72,10 +79,15 @@ export function SettingsScreen() {
                   Día {s.day + 1} · Nivel {s.level}
                 </td>
                 <td className="num">{money(s.balanceCents)}</td>
-                <td className="dim">{new Date(s.savedAt).toLocaleString('es-ES')}</td>
-                <td style={{ display: 'flex', gap: 6 }}>
+                <td className="dim">
+                  {new Date(s.savedAt).toLocaleString("es-ES")}
+                </td>
+                <td className="cell-actions">
                   {s.id !== saveId && (
-                    <button className="small" onClick={() => setError(loadGame(s.id))}>
+                    <button
+                      className="small"
+                      onClick={() => setError(loadGame(s.id))}
+                    >
                       Cargar
                     </button>
                   )}
@@ -103,10 +115,10 @@ export function SettingsScreen() {
       </Card>
 
       <Card title="Cómo funciona el tiempo">
-        <p className="dim" style={{ fontSize: 13 }}>
-          Apertura 9:00–22:00 · Cierre contable a las 23:00 · Entregas a las 8:00 · Facturas y
-          nóminas el día 1 de cada mes · Meses de 30 días. Velocidades: 1x = 2 min de juego por
-          segundo real.
+        <p className="dim t-small">
+          Apertura 9:00–22:00. Cierre contable a las 23:00. Entregas a las 8:00.
+          Facturas y nóminas el día 1 de cada mes · Meses de 30 días.
+          Velocidades: 1x = 2 min de juego por segundo real.
         </p>
       </Card>
     </div>

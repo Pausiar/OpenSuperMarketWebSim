@@ -144,9 +144,9 @@
     "semantic_hash": ""
   },
   "src/App.tsx": {
-    "mtime": 1794174630.4536839,
-    "seen": 1794174945.3227355,
-    "ast_hash": "b870ce4a5517661ba476049742a67c0c",
+    "mtime": 1794181782.5970707,
+    "seen": 1794181825.8561072,
+    "ast_hash": "168aaf76d8473d33a76c8f462f20cf72",
     "semantic_hash": ""
   },
   "src/core/rng.ts": {
@@ -384,9 +384,9 @@
     "semantic_hash": ""
   },
   "src/ui/MainMenu.tsx": {
-    "mtime": 1794174630.5096838,
-    "seen": 1794174945.322814,
-    "ast_hash": "a354095b496e12e7bda333a06d8ea454",
+    "mtime": 1794181822.4370732,
+    "seen": 1794181825.8562262,
+    "ast_hash": "6854f186ec5b4d4ee8c597b52e8084ff",
     "semantic_hash": ""
   },
   "src/ui/components.tsx": {
@@ -402,63 +402,63 @@
     "semantic_hash": ""
   },
   "src/ui/screens/DashboardScreen.tsx": {
-    "mtime": 1794174402.7696705,
-    "seen": 1794174445.999735,
-    "ast_hash": "62a7357a99d05ce896f71bfe82f3e06f",
+    "mtime": 1794182446.6091104,
+    "seen": 1794182459.3124938,
+    "ast_hash": "3701a098b30df9f23553b491aabaeca8",
     "semantic_hash": ""
   },
   "src/ui/screens/EmployeesScreen.tsx": {
-    "mtime": 1794173728.4040658,
-    "seen": 1794173862.2827241,
-    "ast_hash": "dc5363b62c826c3716c9ebb5bb23bfc4",
+    "mtime": 1794182428.1834152,
+    "seen": 1794182442.1484373,
+    "ast_hash": "2d7cf3c7bfe1c09189b9f10d5b08ae0b",
     "semantic_hash": ""
   },
   "src/ui/screens/FinanceScreen.tsx": {
-    "mtime": 1794173728.4040658,
-    "seen": 1794173862.282725,
-    "ast_hash": "0990d75fb927704bc0387696dcff948e",
+    "mtime": 1794182428.1836512,
+    "seen": 1794182442.1484396,
+    "ast_hash": "823d141225f5ed3951ff4e08c22d79b1",
     "semantic_hash": ""
   },
   "src/ui/screens/InventoryScreen.tsx": {
-    "mtime": 1794173728.4040658,
-    "seen": 1794173862.282726,
-    "ast_hash": "843bc53707d2ee8c32ce0bb44a3d53b6",
+    "mtime": 1794182186.9247615,
+    "seen": 1794182408.5017834,
+    "ast_hash": "de99052e9efefe05f3b1fe89ba34f5f2",
     "semantic_hash": ""
   },
   "src/ui/screens/ProductsScreen.tsx": {
-    "mtime": 1794173728.4040658,
-    "seen": 1794173862.2827272,
-    "ast_hash": "2abd6294336fbfb6c9c4c29a75d6248e",
+    "mtime": 1794182186.925469,
+    "seen": 1794182408.5017846,
+    "ast_hash": "ee841927d3cc66a2082021de61cfb22e",
     "semantic_hash": ""
   },
   "src/ui/screens/ReportsScreen.tsx": {
-    "mtime": 1794173728.4040658,
-    "seen": 1794173862.2827282,
-    "ast_hash": "7cb7e018fe3901a5fd805d055d809600",
+    "mtime": 1794182198.8242424,
+    "seen": 1794182408.5017855,
+    "ast_hash": "a7bde4fad7b8f9b3ccdd85da2f00b2af",
     "semantic_hash": ""
   },
   "src/ui/screens/ScheduleScreen.tsx": {
-    "mtime": 1794173728.4040658,
-    "seen": 1794173862.282729,
-    "ast_hash": "706d5377769fb6d6c8cf6967cbbe5f06",
+    "mtime": 1794182446.5531104,
+    "seen": 1794182459.3125005,
+    "ast_hash": "485e830e53a1943697336b4a989dd876",
     "semantic_hash": ""
   },
   "src/ui/screens/SettingsScreen.tsx": {
-    "mtime": 1794173728.4040658,
-    "seen": 1794173862.2827303,
-    "ast_hash": "7723698347b17380a665afbcb4ae1e32",
+    "mtime": 1794182446.7211103,
+    "seen": 1794182459.3125014,
+    "ast_hash": "450a64b7d89e448144f559cdd243bf49",
     "semantic_hash": ""
   },
   "src/ui/screens/StoreScreen.tsx": {
-    "mtime": 1794174401.0016704,
-    "seen": 1794174445.9997454,
-    "ast_hash": "39e162d0d467de04e00ee4a3cff8feed",
+    "mtime": 1794182446.7011104,
+    "seen": 1794182459.3125029,
+    "ast_hash": "64135d5d3f4f4165ef839b214ba59770",
     "semantic_hash": ""
   },
   "src/ui/screens/SuppliersScreen.tsx": {
-    "mtime": 1794173728.4040658,
-    "seen": 1794173862.2827322,
-    "ast_hash": "19fe49b2d93a7f87a3a418c3731455df",
+    "mtime": 1794182428.1824884,
+    "seen": 1794182442.148455,
+    "ast_hash": "fe59428e8d200ecd3d487530f42f3e28",
     "semantic_hash": ""
   },
   "src/ui/useGame.ts": {
@@ -2382,21 +2382,21 @@
     "semantic_hash": ""
   },
   "src/ui/GameOverModal.tsx": {
-    "mtime": 1794174630.521684,
-    "seen": 1794174945.3228123,
-    "ast_hash": "d2ec724da2a211ae1477de9b73c378d3",
+    "mtime": 1794181835.1130738,
+    "seen": 1794181855.5489938,
+    "ast_hash": "ec2d9838d9daf4c9a109669f9ab2f9f7",
     "semantic_hash": ""
   },
   "src/ui/TutorialPanel.tsx": {
-    "mtime": 1794174448.273673,
-    "seen": 1794174614.8708005,
-    "ast_hash": "6cb372d34cb8e3755f8bbf78bfc1f8ca",
+    "mtime": 1794181830.9450736,
+    "seen": 1794181855.5489979,
+    "ast_hash": "abf34effe30d8170fd10293b82bc2d89",
     "semantic_hash": ""
   },
   "src/ui/storeview/StoreCanvas.tsx": {
-    "mtime": 1794174141.8111389,
-    "seen": 1794174445.9997473,
-    "ast_hash": "267b10f7a29da773b0df5c1790115407",
+    "mtime": 1794182446.8051102,
+    "seen": 1794182459.3125048,
+    "ast_hash": "87005928fcb6c9191ef374f0b3b41437",
     "semantic_hash": ""
   },
   "src/ui/storeview/agents.test.ts": {

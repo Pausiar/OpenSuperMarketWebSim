@@ -53,8 +53,7 @@ export function SuppliersScreen() {
       <ErrorBox message={error} />
       {okMsg && (
         <div
-          className="error-box"
-          style={{ borderColor: 'var(--green)', color: 'var(--green)', background: '#143528' }}
+          className="error-box ok-box"
         >
           {okMsg}
         </div>
@@ -75,7 +74,7 @@ export function SuppliersScreen() {
             }}
           >
             <h2>{s.name}</h2>
-            <p className="dim" style={{ fontSize: 12.5 }}>
+            <p className="dim t-small">
               {s.description}
             </p>
             <div
@@ -105,7 +104,7 @@ export function SuppliersScreen() {
       <Card
         title={`Nuevo pedido a ${supplier.name}`}
         actions={
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+          <div className="row">
             {priceEvent > 1 && (
               <Badge tone="red">Precios +{Math.round((priceEvent - 1) * 100)}% (evento)</Badge>
             )}
@@ -123,7 +122,7 @@ export function SuppliersScreen() {
         }
       >
         {totalCents > 0 && totalCents < supplier.minOrderCents && (
-          <p style={{ color: 'var(--yellow)' }}>
+          <p className="t-warn">
             Por debajo del pedido mínimo ({money(supplier.minOrderCents)}).
           </p>
         )}
@@ -191,7 +190,7 @@ export function SuppliersScreen() {
                 <td className="dim">{formatDay(o.placedDay)}</td>
                 <td>
                   {formatDay(o.expectedDay)}
-                  {o.note && <span style={{ color: 'var(--yellow)' }}> · {o.note}</span>}
+                  {o.note && <span className="t-warn"> · {o.note}</span>}
                 </td>
                 <td>
                   <Badge tone="blue">En camino</Badge>
@@ -199,7 +198,7 @@ export function SuppliersScreen() {
               </tr>
             ))}
             {pastOrders.map((o) => (
-              <tr key={o.id} style={{ opacity: 0.55 }}>
+              <tr key={o.id} className="is-dim">
                 <td className="dim">{o.id}</td>
                 <td>{supplierDef(o.supplierId).name}</td>
                 <td className="num">{num(o.lines.reduce((a, l) => a + l.qty, 0))} uds</td>

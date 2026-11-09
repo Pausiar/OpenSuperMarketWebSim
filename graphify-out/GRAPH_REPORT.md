@@ -1,17 +1,17 @@
-# Graph Report - OpenSuperMarketWebSim  (2026-11-08)
+# Graph Report - OpenSuperMarketWebSim  (2026-11-09)
 
 ## Corpus Check
-- 345 files · ~423,032 words
+- 345 files · ~424,687 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 7 file(s) not represented in the graph (top: .css 5, (none) 2)
+- Unclassified: 10 file(s) not represented in the graph (top: .css 8, (none) 2)
 
 ## Summary
-- 3329 nodes · 5733 edges · 254 communities (239 shown, 15 thin omitted)
+- 3359 nodes · 5811 edges · 254 communities (240 shown, 14 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 158 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `adac563c`
+- Built from commit: `d98173a0`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -19,10 +19,10 @@
 - sloplint.mjs
 - pull-hig.mjs
 - App.tsx
-- SimCtx
+- customerSystem.ts
 - refcheck.mjs
 - theme.mjs
-- economy.ts
+- storeOps.ts
 - pages.yml
 - package.json
 - inventory.ts
@@ -46,7 +46,7 @@
 - Apple Design Skill
 - capture.mjs
 - compilerOptions
-- StoreScreen.tsx
+- saveRepo.ts
 - time.ts
 - App Clips
 - The menu bar
@@ -152,7 +152,7 @@
 - Texture and print artifacts: a budgeted vocabulary
 - install-hook.mjs
 - Accessibility
-- gestures.md
+- designing-for-games.md
 - App Shortcuts
 - Layout
 - Lists and tables
@@ -233,17 +233,16 @@
 - Supermarket Tycoon
 - Action sheets
 - Activity views
-- hig/dark-mode.md
 - sheets.md
 - Collections
 - Color wells
 - iCloud
-- solvency.ts
-- accessibility.md
-- Panels
+- image-views.md
+- Branding
+- NFC
 - Printing
 - Steppers
-- Home Screen quick actions
+- Web views
 - design.md: the locked system
 - Microinteractions
 - ponytail-audit/SKILL.md
@@ -251,16 +250,15 @@
 - ponytail-review/SKILL.md
 - Ponytail
 - Cross-platform translation
-- playing-haptics.md
+- Feedback
 - index.tsx
-- helpers.ts
+- state.ts
+- solvency.ts
 - ponytail-debt/SKILL.md
 - tailwind-pass/Hero.tsx
 - tsconfig.json
 - CLAUDE.md
 - .claude/CLAUDE.md
-- status-bars.md
-- hig-lookup.md
 - 05-workbench.md
 - 07-manifesto.md
 - 09-quote-led.md
@@ -269,7 +267,7 @@
 - review-finish.md
 - review-hero.md
 - Feature.vue
-- lists-and-tables.md
+- Outline views
 
 ## God Nodes (most connected - your core abstractions)
 1. `report()` - 90 edges
@@ -298,7 +296,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (254 total, 15 thin omitted)
+## Communities (254 total, 14 thin omitted)
 
 ### Community 0 - "sloplint.mjs"
 Cohesion: 0.03
@@ -309,12 +307,12 @@ Cohesion: 0.07
 Nodes (65): abstractOf(), ALL_PLATFORMS, anchorEntries(), anchorMapFor(), cellText(), collapseBlankLines(), collectReferences(), coveredPlatformsLine() (+57 more)
 
 ### Community 2 - "App.tsx"
-Cohesion: 0.12
-Nodes (48): react, App(), GameShell(), NAV, SCREENS, SPEED_LABEL, SPEED_NAME, formatClock() (+40 more)
+Cohesion: 0.09
+Nodes (53): react, App(), NAV, SCREENS, SPEED_NAME, formatClock(), formatDate(), formatDay() (+45 more)
 
-### Community 3 - "SimCtx"
-Cohesion: 0.13
-Nodes (5): SimCtx, GameEngine, SimSystem, GameEvent, GameStore
+### Community 3 - "customerSystem.ts"
+Cohesion: 0.07
+Nodes (34): ACCOUNTING_HOUR, CLOSE_HOUR, DAYS_PER_MONTH, DAYS_PER_WEEK, DAYS_PER_YEAR, isCustomerHour(), MIN_PER_HOUR, MONTH_NAMES (+26 more)
 
 ### Community 4 - "refcheck.mjs"
 Cohesion: 0.04
@@ -324,9 +322,9 @@ Nodes (47): args, AS_JSON, BY_BASE, CANON, catalogFaces, clean, exemplarDir, exp
 Cohesion: 0.09
 Nodes (52): Build, addLog(), ADJUST, args, ASK, BASE_CUSTOM, buildIndex(), check() (+44 more)
 
-### Community 6 - "economy.ts"
-Cohesion: 0.12
-Nodes (27): ACCOUNTING_HOUR, DAYS_PER_MONTH, formatDateTime(), monthLabel(), BLACKOUT_AFTER_OVERDUE_DAYS, KWH_PRICE_CENTS, LATE_FEE_RATE, LOAN_OFFER_MAP (+19 more)
+### Community 6 - "storeOps.ts"
+Cohesion: 0.09
+Nodes (50): dayOf(), formatDateTime(), EQUIPMENT, EQUIPMENT_MAP, EquipmentType, REPAIR_COST_FACTOR, levelDef(), STORE_LEVELS (+42 more)
 
 ### Community 7 - "pages.yml"
 Cohesion: 0.07
@@ -337,8 +335,8 @@ Cohesion: 0.07
 Nodes (38): dependencies, react@^19.2.8, react-dom@^19.2.8, zod@^4.4.3, zustand@^5.0.15, devDependencies, oxlint@^1.75.0, prettier@^3.9.6 (+30 more)
 
 ### Community 9 - "inventory.ts"
-Cohesion: 0.12
-Nodes (38): dayOf(), EQUIPMENT_MAP, PRODUCT_MAP, ProductCategory, ProductDef, productDef(), PRODUCTS, StorageType (+30 more)
+Cohesion: 0.13
+Nodes (34): EquipmentDef, CATEGORY_NAMES, PRODUCT_MAP, ProductCategory, ProductDef, productDef(), PRODUCTS, StorageType (+26 more)
 
 ### Community 10 - "sprites.ts"
 Cohesion: 0.05
@@ -373,8 +371,8 @@ Cohesion: 0.07
 Nodes (28): Adding transitions and animating content updates, Anatomy, Best practices, CarPlay, CarPlay dimensions, Change log, Choosing colors, Compact (+20 more)
 
 ### Community 18 - "state.ts"
-Cohesion: 0.05
-Nodes (57): Rng, CLOSE_HOUR, Speed, SPEED_MIN_PER_SEC, toParts(), Role, ROLE_MAP, RoleDef (+49 more)
+Cohesion: 0.09
+Nodes (24): vitest, Rng, MIN_PER_DAY, createBill(), dailyEmployeeUpkeep(), EmployeeStatus, fire(), FIRST_NAMES (+16 more)
 
 ### Community 19 - "Widgets"
 Cohesion: 0.08
@@ -392,13 +390,17 @@ Nodes (23): Apple Pay, Apple Pay button, Apple Pay mark, Black, Button size and 
 Cohesion: 0.18
 Nodes (21): CHROMES, contrast(), focusRing(), frames(), hideStyles(), inventory(), isUrl(), lineBreaks() (+13 more)
 
+### Community 23 - "hig/layout.md"
+Cohesion: 0.18
+Nodes (4): Best practices, Column views, Platform considerations, Related guidelines
+
 ### Community 24 - "path-controls.md"
 Cohesion: 0.40
 Nodes (4): Best practices, Path controls, Platform considerations, Related guidelines
 
 ### Community 25 - "sf-symbols.md"
-Cohesion: 0.17
-Nodes (8): Best practices, Dock menus, Platform considerations, Related guidelines, Best practices, Image wells, Platform considerations, Related guidelines
+Cohesion: 0.14
+Nodes (11): Best practices, Dock menus, Platform considerations, Related guidelines, Best practices, Home Screen quick actions, Platform considerations, Related guidelines (+3 more)
 
 ### Community 26 - "Machine learning"
 Cohesion: 0.10
@@ -416,13 +418,13 @@ Nodes (15): argv, chrome, CHROMES, HERE, isUrl, made, out, roots (+7 more)
 Cohesion: 0.10
 Nodes (19): compilerOptions, allowArbitraryExtensions, allowImportingTsExtensions, erasableSyntaxOnly, jsx, lib, module, moduleDetection (+11 more)
 
-### Community 30 - "StoreScreen.tsx"
-Cohesion: 0.10
-Nodes (38): EQUIPMENT, EquipmentDef, EquipmentType, REPAIR_COST_FACTOR, levelDef(), STORE_LEVELS, StoreLevelDef, CAMPAIGN_MAP (+30 more)
+### Community 30 - "saveRepo.ts"
+Cohesion: 0.22
+Nodes (10): equipmentSchema, hourSnapshotSchema, loadGame(), migrate(), placementSchema, productSchema, saveGame(), SaveMeta (+2 more)
 
 ### Community 31 - "time.ts"
-Cohesion: 0.16
-Nodes (21): DAYS_PER_WEEK, DAYS_PER_YEAR, formatMinutesAsHM(), isCustomerHour(), MIN_PER_HOUR, MONTH_NAMES, MONTHS_PER_YEAR, OPEN_HOUR (+13 more)
+Cohesion: 0.22
+Nodes (16): formatMinutesAsHM(), WEEKDAY_NAMES, ROLE_MAP, RoleDef, ROLES, addShift(), removeShift(), ScheduleIssue (+8 more)
 
 ### Community 32 - "App Clips"
 Cohesion: 0.11
@@ -469,7 +471,7 @@ Cohesion: 0.13
 Nodes (11): chrome, CHROMES, cssPath, HERE, out, page, roots, [slug, pageArg, yArg] (+3 more)
 
 ### Community 43 - "menus.md"
-Cohesion: 0.19
+Cohesion: 0.17
 Nodes (8): Best practices, Combo boxes, Platform considerations, Related guidelines, Best practices, Platform considerations, Related guidelines, Token fields
 
 ### Community 44 - "Buttons"
@@ -485,8 +487,8 @@ Cohesion: 0.14
 Nodes (14): Black, Button size and corner radius, Change log, Collecting data, Creating a custom Sign in with Apple button, Custom buttons with a logo and text, Custom logo-only buttons, Displaying buttons (+6 more)
 
 ### Community 47 - "map.ts"
-Cohesion: 0.11
-Nodes (44): doorTiles(), MapState, tilesOf(), HourSnapshot, Agent, buildLayout(), CheckoutSpot, createRng() (+36 more)
+Cohesion: 0.06
+Nodes (69): autoPlace(), canPlace(), createMap(), doorTiles(), footprint(), inStorageZone(), isWall(), LayoutEffects (+61 more)
 
 ### Community 48 - "Augmented reality"
 Cohesion: 0.15
@@ -840,6 +842,10 @@ Nodes (6): args, HERE, hookEntry, ourHook(), settings, withoutOurs()
 Cohesion: 0.22
 Nodes (9): Accessibility, Change log, Cognitive, Hearing, Mobility, Platform considerations, Related guidelines, Speech (+1 more)
 
+### Community 136 - "designing-for-games.md"
+Cohesion: 0.12
+Nodes (10): Best practices, Designing for iOS, Best practices, Designing for iPadOS, Best practices, Designing for macOS, Best practices, Gyroscope and accelerometer (+2 more)
+
 ### Community 137 - "App Shortcuts"
 Cohesion: 0.22
 Nodes (9): App Shortcuts, Best practices, Change log, Desktop (macOS), Editorial guidelines, Mobile (iOS, iPadOS), Platform considerations, Related guidelines (+1 more)
@@ -1160,13 +1166,9 @@ Nodes (5): Action sheets, Best practices, Mobile (iOS, iPadOS), Platform conside
 Cohesion: 0.40
 Nodes (5): Activity views, Best practices, Platform considerations, Related guidelines, Share and action extensions
 
-### Community 217 - "hig/dark-mode.md"
-Cohesion: 0.21
-Nodes (5): Best practices, Branding, Change log, Platform considerations, Related guidelines
-
 ### Community 218 - "sheets.md"
-Cohesion: 0.15
-Nodes (10): Best practices, Change log, Collaboration and sharing, Platform considerations, Related guidelines, Best practices, Change log, Modality (+2 more)
+Cohesion: 0.11
+Nodes (15): Best practices, Change log, Collaboration and sharing, Platform considerations, Related guidelines, Best practices, Change log, Modality (+7 more)
 
 ### Community 219 - "Collections"
 Cohesion: 0.40
@@ -1180,13 +1182,17 @@ Nodes (5): Best practices, Color wells, Desktop (macOS), Platform considerations
 Cohesion: 0.40
 Nodes (4): Best practices, Change log, iCloud, Platform considerations
 
-### Community 222 - "solvency.ts"
-Cohesion: 0.24
-Nodes (11): BANKRUPTCY_DEBT_DAYS, BANKRUPTCY_OVERDUE_BILLS, bankruptcyReason(), countOverdueBills(), DEBT_WARNING_DAYS, gameOverMessage(), GameOverReason, isBelowOverdraft() (+3 more)
+### Community 222 - "image-views.md"
+Cohesion: 0.25
+Nodes (4): Best practices, Image wells, Platform considerations, Related guidelines
 
-### Community 224 - "Panels"
+### Community 223 - "Branding"
 Cohesion: 0.40
-Nodes (5): Best practices, HUD-style panels, Panels, Platform considerations, Related guidelines
+Nodes (5): Best practices, Branding, Change log, Platform considerations, Related guidelines
+
+### Community 224 - "NFC"
+Cohesion: 0.50
+Nodes (4): Background tag reading, In-app tag reading, NFC, Platform considerations
 
 ### Community 225 - "Printing"
 Cohesion: 0.40
@@ -1196,9 +1202,9 @@ Nodes (5): Best practices, Desktop (macOS), Platform considerations, Printing, R
 Cohesion: 0.40
 Nodes (5): Best practices, Desktop (macOS), Platform considerations, Related guidelines, Steppers
 
-### Community 227 - "Home Screen quick actions"
+### Community 227 - "Web views"
 Cohesion: 0.50
-Nodes (4): Best practices, Home Screen quick actions, Platform considerations, Related guidelines
+Nodes (3): Best practices, Platform considerations, Web views
 
 ### Community 228 - "design.md: the locked system"
 Cohesion: 0.40
@@ -1228,50 +1234,46 @@ Nodes (4): Before you write, Levels, Ponytail, The smallest complete change
 Cohesion: 0.50
 Nodes (3): Conventions to check, Cross-platform translation, Vocabulary
 
-### Community 235 - "playing-haptics.md"
-Cohesion: 0.15
-Nodes (8): Best practices, Feedback, Platform considerations, Related guidelines, Best practices, Gyroscope and accelerometer, Platform considerations, Related guidelines
+### Community 235 - "Feedback"
+Cohesion: 0.50
+Nodes (4): Best practices, Feedback, Platform considerations, Related guidelines
 
 ### Community 236 - "index.tsx"
-Cohesion: 0.08
-Nodes (41): DEFAULT_PROGRESS, isStepDone(), key(), loadProgress(), Predicate, saveProgress(), TUTORIAL_STEPS, tutorialPredicates (+33 more)
+Cohesion: 0.10
+Nodes (27): GameShell(), SpeedLabel(), GameStore, GameOverModal(), BoltIcon(), BoxIcon(), CalendarIcon(), CartIcon() (+19 more)
 
-### Community 237 - "helpers.ts"
-Cohesion: 0.15
-Nodes (17): vitest, MIN_PER_DAY, createBill(), pushNotification(), billingSystem, setDay(), startDay(), customerSystem (+9 more)
+### Community 237 - "state.ts"
+Cohesion: 0.09
+Nodes (32): Speed, Role, Bill, Loan, Transaction, Applicant, Employee, InventoryLot (+24 more)
+
+### Community 238 - "solvency.ts"
+Cohesion: 0.22
+Nodes (12): BANKRUPTCY_DEBT_DAYS, BANKRUPTCY_OVERDUE_BILLS, bankruptcyReason(), countOverdueBills(), DEBT_WARNING_DAYS, gameOverMessage(), GameOverReason, isBelowOverdraft() (+4 more)
 
 ### Community 239 - "ponytail-debt/SKILL.md"
 Cohesion: 0.50
 Nodes (3): Boundaries, Output, Scan
 
-### Community 245 - "status-bars.md"
+### Community 255 - "Outline views"
 Cohesion: 0.50
-Nodes (3): Best practices, Platform considerations, Status bars
-
-### Community 246 - "hig-lookup.md"
-Cohesion: 0.16
-Nodes (7): Background tag reading, In-app tag reading, NFC, Platform considerations, Best practices, Platform considerations, Web views
-
-### Community 255 - "lists-and-tables.md"
-Cohesion: 0.21
-Nodes (8): Best practices, Column views, Platform considerations, Related guidelines, Best practices, Outline views, Platform considerations, Related guidelines
+Nodes (4): Best practices, Outline views, Platform considerations, Related guidelines
 
 ## Knowledge Gaps
-- **15 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **14 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `clamp()` connect `Responsive` to `state.ts`?**
-  _High betweenness centrality (0.079) - this node is a cross-community bridge._
+- **Why does `clamp()` connect `Responsive` to `customerSystem.ts`?**
+  _High betweenness centrality (0.086) - this node is a cross-community bridge._
 - **Should `sloplint.mjs` be split into smaller, more focused modules?**
   _Cohesion score 0.03110047846889952 - nodes in this community are weakly interconnected._
 - **Should `pull-hig.mjs` be split into smaller, more focused modules?**
   _Cohesion score 0.06603346901854365 - nodes in this community are weakly interconnected._
 - **Should `App.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.12027972027972028 - nodes in this community are weakly interconnected._
-- **Should `SimCtx` be split into smaller, more focused modules?**
-  _Cohesion score 0.1341991341991342 - nodes in this community are weakly interconnected._
+  _Cohesion score 0.09399585921325052 - nodes in this community are weakly interconnected._
+- **Should `customerSystem.ts` be split into smaller, more focused modules?**
+  _Cohesion score 0.07329462989840348 - nodes in this community are weakly interconnected._
 - **Should `refcheck.mjs` be split into smaller, more focused modules?**
   _Cohesion score 0.03636363636363636 - nodes in this community are weakly interconnected._
 - **Should `theme.mjs` be split into smaller, more focused modules?**

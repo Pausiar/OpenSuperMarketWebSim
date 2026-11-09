@@ -1,16 +1,22 @@
-import { useState } from 'react';
-import { formatMinutesAsHM, WEEKDAY_NAMES } from '../../core/time';
-import { ROLE_MAP } from '../../domain/data/roles';
-import { addShift, removeShift, scheduleIssues, weeklyMinutes } from '../../domain/roster';
-import { Card, ErrorBox, Field } from '../components';
-import { useGame } from '../useGame';
+import { useState } from "react";
+import { formatMinutesAsHM, WEEKDAY_NAMES } from "../../core/time";
+import { ROLE_MAP } from "../../domain/data/roles";
+import {
+  addShift,
+  removeShift,
+  scheduleIssues,
+  weeklyMinutes,
+} from "../../domain/roster";
+import { Card, ErrorBox, Field } from "../components";
+import { BlockIcon, CloseIcon, WarningIcon } from "../icons";
+import { useGame } from "../useGame";
 
 const HOURS = Array.from({ length: 18 }, (_, i) => i + 6); // 06:00 - 23:00
 
 export function ScheduleScreen() {
   const { state, run } = useGame();
   const [error, setError] = useState<string | null>(null);
-  const [employeeId, setEmployeeId] = useState('');
+  const [employeeId, setEmployeeId] = useState("");
   const [weekday, setWeekday] = useState(0);
   const [startHour, setStartHour] = useState(9);
   const [endHour, setEndHour] = useState(15);
@@ -19,10 +25,14 @@ export function ScheduleScreen() {
 
   const submit = () => {
     if (!employeeId) {
-      setError('Selecciona un empleado.');
+      setError("Selecciona un empleado.");
       return;
     }
-    setError(run((ctx) => addShift(ctx, employeeId, weekday, startHour * 60, endHour * 60)));
+    setError(
+      run((ctx) =>
+        addShift(ctx, employeeId, weekday, startHour * 60, endHour * 60),
+      ),
+    );
   };
 
   return (
@@ -33,8 +43,11 @@ export function ScheduleScreen() {
       <Card title="Añadir turno semanal">
         <div className="form-row">
           <Field label="Empleado">
-            <select value={employeeId} onChange={(e) => setEmployeeId(e.target.value)}>
-              <option value="">— Elegir —</option>
+            <select
+              value={employeeId}
+              onChange={(e) => setEmployeeId(e.target.value)}
+            >
+              <option value="">Elegir…</option>
               {state.employees.map((e) => (
                 <option key={e.id} value={e.id}>
                   {e.name} ({ROLE_MAP[e.role].name})
@@ -43,7 +56,10 @@ export function ScheduleScreen() {
             </select>
           </Field>
           <Field label="Día">
-            <select value={weekday} onChange={(e) => setWeekday(parseInt(e.target.value))}>
+            <select
+              value={weekday}
+              onChange={(e) => setWeekday(parseInt(e.target.value))}
+            >
               {WEEKDAY_NAMES.map((d, i) => (
                 <option key={i} value={i}>
                   {d}
@@ -52,7 +68,10 @@ export function ScheduleScreen() {
             </select>
           </Field>
           <Field label="Inicio">
-            <select value={startHour} onChange={(e) => setStartHour(parseInt(e.target.value))}>
+            <select
+              value={startHour}
+              onChange={(e) => setStartHour(parseInt(e.target.value))}
+            >
               {HOURS.map((h) => (
                 <option key={h} value={h}>
                   {h}:00
@@ -61,7 +80,10 @@ export function ScheduleScreen() {
             </select>
           </Field>
           <Field label="Fin">
-            <select value={endHour} onChange={(e) => setEndHour(parseInt(e.target.value))}>
+            <select
+              value={endHour}
+              onChange={(e) => setEndHour(parseInt(e.target.value))}
+            >
               {HOURS.concat([24]).map((h) => (
                 <option key={h} value={h}>
                   {h}:00
@@ -74,8 +96,8 @@ export function ScheduleScreen() {
           </button>
         </div>
         <small className="dim">
-          La tienda abre de 9:00 a 22:00. Sin cajero en su puesto no hay ventas. Los turnos se
-          repiten cada semana.
+          La tienda abre de 9:00 a 22:00. Sin cajero en su puesto no hay ventas.
+          Los turnos se repiten cada semana.
         </small>
       </Card>
 
@@ -84,25 +106,32 @@ export function ScheduleScreen() {
           {issues.map((issue, i) => (
             <p
               key={i}
-              style={{ color: issue.severity === 'error' ? 'var(--red)' : 'var(--yellow)' }}
+              className={`row ${issue.severity === "error" ? "t-bad" : "t-warn"}`}
             >
-              {issue.severity === 'error' ? '⛔' : '⚠'} {issue.message}
+              {issue.severity === "error" ? (
+                <BlockIcon size={16} />
+              ) : (
+                <WarningIcon size={16} />
+              )}
+              {issue.message}
             </p>
           ))}
         </Card>
       )}
 
       <Card title="Calendario semanal">
-        <div className="schedule-grid">
-          <div className="head"></div>
-          {WEEKDAY_NAMES.map((d) => (
-            <div key={d} className="head">
-              {d}
-            </div>
-          ))}
-          {state.employees.map((e) => (
-            <ScheduleRow key={e.id} employeeId={e.id} onError={setError} />
-          ))}
+        <div className="scroll-x">
+          <div className="schedule-grid">
+            <div className="head"></div>
+            {WEEKDAY_NAMES.map((d) => (
+              <div key={d} className="head">
+                {d}
+              </div>
+            ))}
+            {state.employees.map((e) => (
+              <ScheduleRow key={e.id} employeeId={e.id} onError={setError} />
+            ))}
+          </div>
         </div>
         {state.employees.length === 0 && (
           <span className="dim">No hay empleados que planificar.</span>
@@ -112,7 +141,10 @@ export function ScheduleScreen() {
   );
 }
 
-function ScheduleRow(props: { employeeId: string; onError: (e: string | null) => void }) {
+function ScheduleRow(props: {
+  employeeId: string;
+  onError: (e: string | null) => void;
+}) {
   const { state, run } = useGame();
   const emp = state.employees.find((e) => e.id === props.employeeId)!;
   const weekly = weeklyMinutes(state, emp.id) / 60;
@@ -121,8 +153,9 @@ function ScheduleRow(props: { employeeId: string; onError: (e: string | null) =>
       <div className="emp-name">
         <div>
           {emp.name}
-          <div className="dim" style={{ fontSize: 11 }}>
-            {ROLE_MAP[emp.role].name} · {weekly.toFixed(1)}h / {emp.weeklyHours}h
+          <div className="dim t-small">
+            {ROLE_MAP[emp.role].name} · {weekly.toFixed(1)}h / {emp.weeklyHours}
+            h
           </div>
         </div>
       </div>
@@ -134,12 +167,14 @@ function ScheduleRow(props: { employeeId: string; onError: (e: string | null) =>
           <div key={weekday} className="schedule-cell">
             {shifts.map((s) => (
               <span key={s.id} className="shift-chip">
-                {formatMinutesAsHM(s.startMin)}–{formatMinutesAsHM(s.endMin)}
+                {formatMinutesAsHM(s.startMin)} a {formatMinutesAsHM(s.endMin)}
                 <button
                   title="Eliminar turno"
-                  onClick={() => props.onError(run((ctx) => removeShift(ctx, s.id)))}
+                  onClick={() =>
+                    props.onError(run((ctx) => removeShift(ctx, s.id)))
+                  }
                 >
-                  ✕
+                  <CloseIcon size={12} title="Eliminar turno" />
                 </button>
               </span>
             ))}

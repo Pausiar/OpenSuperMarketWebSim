@@ -103,7 +103,7 @@ export function FinanceScreen() {
               </tr>
             ))}
             {closedBills.map((b) => (
-              <tr key={b.id} style={{ opacity: 0.55 }}>
+              <tr key={b.id} className="is-dim">
                 <td>{b.label}</td>
                 <td className="dim">{b.periodLabel}</td>
                 <td className="dim">{b.lines.join(' · ')}</td>
@@ -130,15 +130,7 @@ export function FinanceScreen() {
         <Card title="Préstamos activos">
           {state.loans.length === 0 && <span className="dim">No tienes préstamos.</span>}
           {state.loans.map((l) => (
-            <div
-              key={l.id}
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '6px 0',
-              }}
-            >
+            <div key={l.id} className="list-row">
               <div>
                 <strong>{l.name}</strong>
                 <div className="dim">
@@ -157,19 +149,11 @@ export function FinanceScreen() {
 
         <Card title="Solicitar financiación">
           {LOAN_OFFERS.map((offer) => (
-            <div
-              key={offer.id}
-              style={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                padding: '6px 0',
-              }}
-            >
+            <div key={offer.id} className="list-row">
               <div>
                 <strong>{offer.name}</strong> · {money(offer.principalCents)}
                 <div className="dim">
-                  {offer.months} meses · {(offer.annualRate * 100).toFixed(1)}% anual · cuota{' '}
+                  {offer.months} meses, {(offer.annualRate * 100).toFixed(1)}% anual, cuota{' '}
                   {money(monthlyPaymentCents(offer))}
                 </div>
               </div>
@@ -209,7 +193,7 @@ export function FinanceScreen() {
           <tbody>
             {transactions.map((t) => (
               <tr key={t.id}>
-                <td className="dim" style={{ whiteSpace: 'nowrap' }}>
+                <td className="dim nowrap">
                   {formatDateTime(t.timeMin)}
                 </td>
                 <td>
@@ -218,10 +202,7 @@ export function FinanceScreen() {
                   </Badge>
                 </td>
                 <td>{t.description}</td>
-                <td
-                  className="num"
-                  style={{ color: t.kind === 'income' ? 'var(--green)' : 'var(--red)' }}
-                >
+                <td className={`num ${t.kind === 'income' ? 't-good' : 't-bad'}`}>
                   {t.kind === 'income' ? '+' : '−'}
                   {money(t.amountCents)}
                 </td>

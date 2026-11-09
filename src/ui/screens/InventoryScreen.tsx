@@ -30,7 +30,7 @@ export function InventoryScreen() {
       <div className="grid cols-3">
         {(['ambient', 'chilled', 'frozen'] as StorageType[]).map((st) => (
           <Card key={st} title={STORAGE_LABEL[st]}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
+            <div className="list-row">
               <span>
                 {num(stock[st])} / {num(capacity[st])} unidades
               </span>
@@ -44,7 +44,7 @@ export function InventoryScreen() {
               tone={stock[st] / Math.max(capacity[st], 1) > 0.9 ? 'red' : undefined}
             />
             {capacity[st] === 0 && (
-              <small style={{ color: 'var(--red)' }}>
+              <small className="t-bad">
                 Sin equipamiento operativo para este tipo.
               </small>
             )}
@@ -106,7 +106,7 @@ export function InventoryScreen() {
               const nextExpiry = lots.length ? Math.min(...lots.map((l) => l.expiresDay!)) : null;
               const low = ps.active && stockQty < ps.minStock;
               return (
-                <tr key={p.id} style={{ opacity: ps.active ? 1 : 0.45 }}>
+                <tr key={p.id} className={ps.active ? undefined : 'is-dim'}>
                   <td>{p.name}</td>
                   <td className="num">{stockQty}</td>
                   <td className="num dim">{incoming > 0 ? `+${incoming}` : '—'}</td>

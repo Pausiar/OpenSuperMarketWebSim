@@ -55,7 +55,7 @@ export function ProductsScreen() {
               const margin = marginPct(p.baseCostCents, ps.sellingPriceCents);
               const overpriced = ps.sellingPriceCents > p.baseSellCents * 1.25;
               return (
-                <tr key={p.id} style={{ opacity: ps.active ? 1 : 0.5 }}>
+                <tr key={p.id} className={ps.active ? undefined : 'is-dim'}>
                   <td>
                     <strong>{p.name}</strong>
                   </td>
@@ -101,15 +101,12 @@ export function ProductsScreen() {
                   >
                     {pct(margin, 1)}
                     {overpriced && (
-                      <div style={{ fontSize: 10, color: 'var(--yellow)' }}>
+                      <div className="t-warn t-small">
                         caro: venderá menos
                       </div>
                     )}
                   </td>
-                  <td
-                    className="num"
-                    style={{ color: stock < ps.minStock ? 'var(--red)' : undefined }}
-                  >
+                  <td className={`num ${stock < ps.minStock ? 't-bad' : ''}`}>
                     {stock}
                   </td>
                   <td className="num">

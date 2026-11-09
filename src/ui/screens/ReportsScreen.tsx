@@ -82,10 +82,7 @@ export function ReportsScreen() {
                 <td>{monthLabel(r.monthAbs)}</td>
                 <td className="num">{money(r.revenueCents)}</td>
                 <td className="num">{money(r.expensesCents)}</td>
-                <td
-                  className="num"
-                  style={{ color: r.profitCents >= 0 ? 'var(--green)' : 'var(--red)' }}
-                >
+                <td className={`num ${r.profitCents >= 0 ? 't-good' : 't-bad'}`}>
                   {money(r.profitCents)}
                 </td>
                 <td className="num">{num(r.customers)}</td>
@@ -121,18 +118,15 @@ export function ReportsScreen() {
               <tr key={d.day}>
                 <td>{formatDay(d.day)}</td>
                 <td className="num">{num(d.served)}</td>
-                <td className="num" style={{ color: d.lost > 0 ? 'var(--yellow)' : undefined }}>
+                <td className={`num ${d.lost > 0 ? 't-warn' : ''}`}>
                   {num(d.lost)}
                 </td>
                 <td className="num">{num(d.itemsSold)}</td>
                 <td className="num">{money(d.revenueCents)}</td>
-                <td
-                  className="num"
-                  style={{ color: d.expiredUnits > 0 ? 'var(--red)' : undefined }}
-                >
+                <td className={`num ${d.expiredUnits > 0 ? 't-bad' : ''}`}>
                   {d.expiredUnits > 0 ? `${d.expiredUnits} (${money(d.expiredValueCents)})` : '—'}
                 </td>
-                <td className="num" style={{ color: d.theftUnits > 0 ? 'var(--red)' : undefined }}>
+                <td className={`num ${d.theftUnits > 0 ? 't-bad' : ''}`}>
                   {d.theftUnits > 0 ? `${d.theftUnits} (${money(d.theftValueCents)})` : '—'}
                 </td>
               </tr>

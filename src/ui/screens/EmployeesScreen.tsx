@@ -58,27 +58,24 @@ export function EmployeesScreen() {
                 <tr key={e.id}>
                   <td>
                     <strong>{e.name}</strong>
-                    <div className="dim" style={{ fontSize: 11.5 }}>
-                      {e.age} años · exp. {e.experience} · prod. {e.productivity.toFixed(2)}
+                    <div className="dim t-small">
+                      {e.age} años, exp. {e.experience}, prod. {e.productivity.toFixed(2)}
                     </div>
                   </td>
                   <td>{ROLE_MAP[e.role].name}</td>
                   <td className="num">{money(e.salaryCents)}</td>
                   <td className="num dim">{e.weeklyHours}h</td>
-                  <td
-                    className="num"
-                    style={{ color: weekly > e.weeklyHours ? 'var(--yellow)' : undefined }}
-                  >
+                  <td className={`num ${weekly > e.weeklyHours ? 't-warn' : ''}`}>
                     {weekly.toFixed(1)}h
                   </td>
-                  <td style={{ minWidth: 70 }}>
+                  <td className="cell-meter">
                     <Progress
                       value={e.motivation}
                       max={100}
                       tone={e.motivation < 40 ? 'red' : e.motivation > 70 ? 'green' : 'yellow'}
                     />
                   </td>
-                  <td style={{ minWidth: 70 }}>
+                  <td className="cell-meter">
                     <Progress value={e.fatigue} max={100} tone={e.fatigue > 70 ? 'red' : 'green'} />
                   </td>
                   <td className="num">{e.vacationDaysLeft}</td>
@@ -87,13 +84,13 @@ export function EmployeesScreen() {
                     {e.status === 'sick' && <Badge tone="red">De baja</Badge>}
                     {e.status === 'vacation' && <Badge tone="blue">Vacaciones</Badge>}
                   </td>
-                  <td style={{ whiteSpace: 'nowrap' }}>
-                    <div style={{ display: 'flex', gap: 4, alignItems: 'center' }}>
+                  <td className="nowrap">
+                    <div className="row">
                       <input
                         type="number"
                         min="1"
                         max={e.vacationDaysLeft}
-                        style={{ width: 52 }}
+                        className="input-narrow"
                         value={vacationDays[e.id] ?? 3}
                         onChange={(ev) =>
                           setVacationDays({

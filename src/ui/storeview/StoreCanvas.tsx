@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useRef } from 'react';
-import { doorTiles, tilesOf, type MapState } from '../../domain/map';
-import type { HourSnapshot } from '../../domain/state';
-import type { Speed } from '../../core/time';
-import { SPEED_MIN_PER_SEC } from '../../core/time';
+import { useEffect, useMemo, useRef } from "react";
+import { doorTiles, tilesOf, type MapState } from "../../domain/map";
+import type { HourSnapshot } from "../../domain/state";
+import type { Speed } from "../../core/time";
+import { SPEED_MIN_PER_SEC } from "../../core/time";
 import {
   buildLayout,
   createRng,
@@ -11,8 +11,13 @@ import {
   stepCrowd,
   type Crowd,
   type Layout,
-} from './agents';
-import type { EquipmentKind, Tile } from './geometry';
+} from "./agents";
+import {
+  findPath,
+  isWalkable,
+  type EquipmentKind,
+  type Tile,
+} from "./geometry";
 import {
   BROKEN_OVERLAY,
   CHECKOUT_SCREEN,
@@ -26,8 +31,8 @@ import {
   stockerSprite,
   tileSprite,
   type Direction,
-} from './pixel';
-import './storeview.css';
+} from "./pixel";
+import "./storeview.css";
 
 export interface StoreCanvasProps {
   map: MapState;
@@ -88,8 +93,55 @@ export function tintFor(hour: number): string | null {
   return null;
 }
 
+/**
+ * `buildLayout` elige la primera casilla libre junto a cada equipo, que puede quedar en un
+ * hueco cerrado (p. ej. tras el mostrador) y sin ruta desde la puerta: los clientes no
+ * nacerían. Aquí se reemplaza por la casilla vecina más cercana a la puerta que sí es alcanzable
+ * y se descartan las estanterías inalcanzables.
+ */
+function reachableLayout(layout: Layout): Layout {
+  const { grid, door } = layout;
+  const dist = (t: Tile) => findPath(grid, door, t)?.length ?? Infinity;
+  const nearestAccess = (tiles: Tile[], fallback: Tile): Tile => {
+    let best = fallback;
+    let bestD = dist(fallback);
+    for (const t of tiles)
+      for (const [dx, dy] of [
+        [0, 1],
+        [1, 0],
+        [-1, 0],
+        [0, -1],
+      ] as const) {
+        const n = { x: t.x + dx, y: t.y + dy };
+        if (!isWalkable(grid, n)) continue;
+        const d = dist(n);
+        if (d < bestD) {
+          best = n;
+          bestD = d;
+        }
+      }
+    return best;
+  };
+  const checkouts = layout.checkouts.map((c) => ({
+    ...c,
+    access: nearestAccess(c.tiles, c.access),
+  }));
+  const shelves = layout.shelves.filter((t) => dist(t) < Infinity);
+  return {
+    ...layout,
+    shelves: shelves.length > 0 ? shelves : layout.shelves,
+    checkouts,
+  };
+}
+
 function dirBetween(dx: number, dy: number): Direction {
-  return Math.abs(dx) > Math.abs(dy) ? (dx < 0 ? 'left' : 'right') : dy < 0 ? 'up' : 'down';
+  return Math.abs(dx) > Math.abs(dy)
+    ? dx < 0
+      ? "left"
+      : "right"
+    : dy < 0
+      ? "up"
+      : "down";
 }
 
 interface DrawCtx {
@@ -106,7 +158,7 @@ function updateTracks(crowd: Crowd, tracks: Map<number, Track>) {
     alive.add(a.id);
     const t = tracks.get(a.id);
     if (!t) {
-      tracks.set(a.id, { x: a.x, y: a.y, dir: 'down', dist: 0, moving: false });
+      tracks.set(a.id, { x: a.x, y: a.y, dir: "down", dist: 0, moving: false });
       continue;
     }
     const dx = a.x - t.x;
@@ -139,7 +191,8 @@ function draw(
 
   const kinds = new Map(equipment.map((e) => [e.id, e]));
   const doors = doorTiles(map);
-  const isDoor = (x: number, y: number) => doors.some((t) => t.x === x && t.y === y);
+  const isDoor = (x: number, y: number) =>
+    doors.some((t) => t.x === x && t.y === y);
   const doorNear = crowd.agents.some((a) =>
     doors.some((t) => Math.abs(a.x - t.x) + Math.abs(a.y - t.y) < 1.6),
   );
@@ -152,30 +205,41 @@ function draw(
       let rows;
       if (isDoor(x, y)) {
         const open = doorNear && !blackout;
-        key = open ? 'doorOpen' : 'door';
-        rows = tileSprite(open ? 'doorOpen' : 'door');
+        key = open ? "doorOpen" : "door";
+        rows = tileSprite(open ? "doorOpen" : "door");
       } else if (border) {
-        const corner = (x === 0 || x === map.w - 1) && (y === 0 || y === map.h - 1);
-        key = corner ? 'wallCorner' : 'wall';
-        rows = tileSprite(corner ? 'wallCorner' : 'wall');
+        const corner =
+          (x === 0 || x === map.w - 1) && (y === 0 || y === map.h - 1);
+        key = corner ? "wallCorner" : "wall";
+        rows = tileSprite(corner ? "wallCorner" : "wall");
       } else {
         const v = (x * 3 + y * 5) % 2;
         key = `floor${v}`;
-        rows = tileSprite('floor', v);
+        rows = tileSprite("floor", v);
       }
       drawSprite(ctx, `t:${key}`, rows, x * U, y * U, s);
     }
 
   // Zona de almacén: tinte cálido y borde discontinuo
-  ctx.fillStyle = 'rgb(240 146 46 / 0.16)';
+  ctx.fillStyle = "rgb(240 146 46 / 0.16)";
   ctx.fillRect(STORAGE.x * U, STORAGE.y * U, STORAGE.w * U, STORAGE.h * U);
-  ctx.fillStyle = 'rgb(43 29 26 / 0.55)';
+  ctx.fillStyle = "rgb(43 29 26 / 0.55)";
   for (let i = 0; i < STORAGE.w * TILE; i += 4) {
-    ctx.fillRect(STORAGE.x * U + i * s, (STORAGE.y + STORAGE.h) * U - s, 2 * s, s);
+    ctx.fillRect(
+      STORAGE.x * U + i * s,
+      (STORAGE.y + STORAGE.h) * U - s,
+      2 * s,
+      s,
+    );
     ctx.fillRect(STORAGE.x * U + i * s, STORAGE.y * U, 2 * s, s);
   }
   for (let i = 0; i < STORAGE.h * TILE; i += 4) {
-    ctx.fillRect((STORAGE.x + STORAGE.w) * U - s, STORAGE.y * U + i * s, s, 2 * s);
+    ctx.fillRect(
+      (STORAGE.x + STORAGE.w) * U - s,
+      STORAGE.y * U + i * s,
+      s,
+      2 * s,
+    );
     ctx.fillRect(STORAGE.x * U, STORAGE.y * U + i * s, s, 2 * s);
   }
 
@@ -188,17 +252,24 @@ function draw(
     const tiles = tilesOf(p, eq.type);
     tiles.forEach((t, i) => {
       drawSprite(ctx, `e:${eq.type}:${eq.id}`, rows, t.x * U, t.y * U, s);
-      if (eq.type === 'checkout' && i === 0 && !eq.broken)
-        drawSprite(ctx, 'e:screen', CHECKOUT_SCREEN, t.x * U, t.y * U, s);
+      if (eq.type === "checkout" && i === 0 && !eq.broken)
+        drawSprite(ctx, "e:screen", CHECKOUT_SCREEN, t.x * U, t.y * U, s);
       if (eq.broken)
-        drawSprite(ctx, `e:broken${brokenFrame}`, BROKEN_OVERLAY[brokenFrame], t.x * U, t.y * U, s);
+        drawSprite(
+          ctx,
+          `e:broken${brokenFrame}`,
+          BROKEN_OVERLAY[brokenFrame],
+          t.x * U,
+          t.y * U,
+          s,
+        );
     });
   }
 
   // Entidades con orden por profundidad (y)
   const ents: Entity[] = [];
   const shadow = (px: number, py: number) => {
-    ctx.fillStyle = 'rgb(43 29 26 / 0.22)';
+    ctx.fillStyle = "rgb(43 29 26 / 0.22)";
     ctx.fillRect(px + 4 * s, py + 14 * s, 8 * s, s);
   };
   const open = openCheckouts(layout, live.openCheckouts);
@@ -209,9 +280,19 @@ function draw(
       y: t.y + 0.5,
       paint: () => {
         // Solo cabeza y torso: el mostrador tapa las piernas.
-        const img = rasterize('cashier:down', cashierSprite('down', 0), s);
+        const img = rasterize("cashier:down", cashierSprite("down", 0), s);
         if (!img) return;
-        ctx.drawImage(img, 0, 0, TILE * s, 10 * s, Math.round(t.x * U), Math.round(t.y * U - 4 * s), TILE * s, 10 * s);
+        ctx.drawImage(
+          img,
+          0,
+          0,
+          TILE * s,
+          10 * s,
+          Math.round(t.x * U),
+          Math.round(t.y * U - 4 * s),
+          TILE * s,
+          10 * s,
+        );
       },
     });
   }
@@ -220,7 +301,9 @@ function draw(
     const ct = co?.tiles[0];
     slots.forEach((sl: Tile, j: number) => {
       const target = j === 0 ? ct : slots[j - 1];
-      const dir = target ? dirBetween(target.x - sl.x, target.y - sl.y) : 'down';
+      const dir = target
+        ? dirBetween(target.x - sl.x, target.y - sl.y)
+        : "down";
       const v = (i * 2 + j) % CUSTOMER_VARIANTS;
       ents.push({
         y: sl.y + 0.5,
@@ -228,15 +311,25 @@ function draw(
           const px = sl.x * U;
           const py = sl.y * U;
           shadow(px, py);
-          drawSprite(ctx, `c:${v}:${dir}:0`, customerSprite(v, dir, 0), px, py, s);
+          drawSprite(
+            ctx,
+            `c:${v}:${dir}:0`,
+            customerSprite(v, dir, 0),
+            px,
+            py,
+            s,
+          );
         },
       });
     });
   });
   for (const a of crowd.agents) {
     const t = d.tracks.get(a.id);
-    const dir = t?.dir ?? 'down';
-    const frame = t && t.moving ? STEP_CYCLE[Math.floor(t.dist * 3) % STEP_CYCLE.length] : 0;
+    const dir = t?.dir ?? "down";
+    const frame =
+      t && t.moving
+        ? STEP_CYCLE[Math.floor(t.dist * 3) % STEP_CYCLE.length]
+        : 0;
     const v = a.id % CUSTOMER_VARIANTS;
     ents.push({
       y: a.y + 0.5,
@@ -244,7 +337,14 @@ function draw(
         const px = a.x * U;
         const py = a.y * U;
         shadow(px, py);
-        drawSprite(ctx, `c:${v}:${dir}:${frame}`, customerSprite(v, dir, frame), px, py, s);
+        drawSprite(
+          ctx,
+          `c:${v}:${dir}:${frame}`,
+          customerSprite(v, dir, frame),
+          px,
+          py,
+          s,
+        );
       },
     });
   }
@@ -253,14 +353,23 @@ function draw(
     const span = STORAGE.w - 1;
     const ph = (time * 0.5) % (2 * span);
     const sx = STORAGE.x + (ph < span ? ph : 2 * span - ph);
-    const dir: Direction = ph < span ? 'right' : 'left';
-    const frame = still ? 0 : STEP_CYCLE[Math.floor(time * 6) % STEP_CYCLE.length];
+    const dir: Direction = ph < span ? "right" : "left";
+    const frame = still
+      ? 0
+      : STEP_CYCLE[Math.floor(time * 6) % STEP_CYCLE.length];
     const sy = STORAGE.y + STORAGE.h - 1;
     ents.push({
       y: sy + 0.5,
       paint: () => {
         shadow(sx * U, sy * U);
-        drawSprite(ctx, `s:${dir}:${frame}`, stockerSprite(dir, frame), sx * U, sy * U, s);
+        drawSprite(
+          ctx,
+          `s:${dir}:${frame}`,
+          stockerSprite(dir, frame),
+          sx * U,
+          sy * U,
+          s,
+        );
       },
     });
   }
@@ -276,19 +385,23 @@ function draw(
 
   // Apagón: oscuridad y luces de emergencia parpadeantes
   if (blackout) {
-    ctx.fillStyle = 'rgb(3 5 12 / 0.7)';
+    ctx.fillStyle = "rgb(3 5 12 / 0.7)";
     ctx.fillRect(0, 0, W, H);
-    const flick = still ? 0.8 : Math.sin(time * 23) + Math.sin(time * 7.3) > 0.2 ? 1 : 0.25;
+    const flick = still
+      ? 0.8
+      : Math.sin(time * 23) + Math.sin(time * 7.3) > 0.2
+        ? 1
+        : 0.25;
     const lamps = [Math.round(map.w * 0.25), Math.round(map.w * 0.75)];
     for (const lx of lamps) {
       const cx = lx * U + U / 2;
       const cy = U + U / 2;
       const g = ctx.createRadialGradient(cx, cy, 0, cx, cy, U * 3.5);
       g.addColorStop(0, `rgb(255 60 50 / ${0.4 * flick})`);
-      g.addColorStop(1, 'rgb(255 60 50 / 0)');
+      g.addColorStop(1, "rgb(255 60 50 / 0)");
       ctx.fillStyle = g;
       ctx.fillRect(cx - U * 3.5, cy - U * 3.5, U * 7, U * 7);
-      ctx.fillStyle = flick > 0.5 ? 'rgb(255 110 90)' : 'rgb(120 30 30)';
+      ctx.fillStyle = flick > 0.5 ? "rgb(255 110 90)" : "rgb(120 30 30)";
       ctx.fillRect(lx * U + 5 * s, 10 * s, 6 * s, 3 * s);
     }
   }
@@ -297,14 +410,14 @@ function draw(
 function useReducedMotion() {
   const ref = useRef(false);
   useEffect(() => {
-    const mq = window.matchMedia?.('(prefers-reduced-motion: reduce)');
+    const mq = window.matchMedia?.("(prefers-reduced-motion: reduce)");
     if (!mq) return;
     ref.current = mq.matches;
     const on = () => {
       ref.current = mq.matches;
     };
-    mq.addEventListener('change', on);
-    return () => mq.removeEventListener('change', on);
+    mq.addEventListener("change", on);
+    return () => mq.removeEventListener("change", on);
   }, []);
   return ref;
 }
@@ -327,7 +440,10 @@ export function StoreCanvas(props: StoreCanvasProps) {
     props.equipment.map((e) => [e.id, e.type, e.broken]),
   ]);
   const layout = useMemo(
-    () => buildLayout(latest.current.map, latest.current.equipment),
+    () =>
+      reachableLayout(
+        buildLayout(latest.current.map, latest.current.equipment),
+      ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [signature],
   );
@@ -346,10 +462,13 @@ export function StoreCanvas(props: StoreCanvasProps) {
     const fit = () => {
       const dpr = window.devicePixelRatio || 1;
       const style = getComputedStyle(box);
-      const avail = box.clientWidth - parseFloat(style.paddingLeft) - parseFloat(style.paddingRight);
+      const avail =
+        box.clientWidth -
+        parseFloat(style.paddingLeft) -
+        parseFloat(style.paddingRight);
       const baseW = latest.current.map.w * TILE;
       const baseH = latest.current.map.h * TILE;
-      const s = Math.max(1, Math.floor((avail * dpr) / baseW));
+      const s = Math.max(2, Math.floor((avail * dpr * 1.02) / baseW));
       scaleRef.current = s;
       if (canvas.width !== baseW * s) canvas.width = baseW * s;
       if (canvas.height !== baseH * s) canvas.height = baseH * s;
@@ -358,16 +477,16 @@ export function StoreCanvas(props: StoreCanvasProps) {
     fit();
     const ro = new ResizeObserver(fit);
     ro.observe(box);
-    window.addEventListener('resize', fit);
+    window.addEventListener("resize", fit);
     return () => {
       ro.disconnect();
-      window.removeEventListener('resize', fit);
+      window.removeEventListener("resize", fit);
     };
   }, [props.map.w, props.map.h]);
 
   useEffect(() => {
     const canvas = canvasRef.current;
-    const ctx = canvas?.getContext('2d');
+    const ctx = canvas?.getContext("2d");
     if (!canvas || !ctx) return;
     const rng = createRng(latest.current.seed ?? 1337);
     let raf = 0;
@@ -379,10 +498,23 @@ export function StoreCanvas(props: StoreCanvasProps) {
       const simMinPerSec = SPEED_MIN_PER_SEC[p.speed];
       // Velocidad visual moderada: a x10 no corren, solo llegan más.
       const walk = p.speed === 0 ? 0 : Math.min(2.5, 1 + p.speed / 5);
-      stepCrowd(crowd.current, layoutRef.current, rng, p.live, simMinPerSec * dt, dt * walk);
+      stepCrowd(
+        crowd.current,
+        layoutRef.current,
+        rng,
+        p.live,
+        simMinPerSec * dt,
+        dt * walk,
+      );
       updateTracks(crowd.current, tracks.current);
       draw(
-        { ctx, s: scaleRef.current, time: now / 1000, still: still.current, tracks: tracks.current },
+        {
+          ctx,
+          s: scaleRef.current,
+          time: now / 1000,
+          still: still.current,
+          tracks: tracks.current,
+        },
         p,
         layoutRef.current,
         crowd.current,
@@ -404,7 +536,13 @@ export function StoreCanvas(props: StoreCanvasProps) {
         />
         {props.blackout && (
           <span className="storeview__badge" role="status">
-            <svg viewBox="0 0 12 16" width="10" height="14" aria-hidden="true" focusable="false">
+            <svg
+              viewBox="0 0 12 16"
+              width="10"
+              height="14"
+              aria-hidden="true"
+              focusable="false"
+            >
               <path d="M7.5 0 1 9h4l-1 7 7-9H7z" fill="currentColor" />
             </svg>
             Apagón
