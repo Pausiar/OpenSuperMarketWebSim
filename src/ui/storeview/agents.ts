@@ -16,6 +16,7 @@ export const MAX_AGENTS = 60;
 const VISUAL_SCALE = 0.3;
 const WALK_TILES_PER_SEC = 2.2;
 const SHELF_PAUSE_SEC = 1.2;
+const PAY_PAUSE_SEC = 2.2;
 
 export type Rng = () => number;
 
@@ -42,6 +43,11 @@ export interface Agent {
   /** Índice del camino donde se detiene a mirar la estantería (-1 = ninguno). */
   pauseAt: number;
   pauseLeft: number;
+  /** Caja donde paga (null si se va sin comprar). */
+  checkoutId: string | null;
+  /** Índice del camino donde espera su turno y paga (-1 = ninguno). */
+  payAt: number;
+  payLeft: number;
   hue: number;
 }
 
@@ -116,23 +122,40 @@ export function queueTiles(layout: Layout, open: CheckoutSpot[], estimate: numbe
 let nextId = 1;
 
 /** Crea un cliente; null si el mapa no permite ninguna ruta. */
-export function spawnAgent(layout: Layout, rng: Rng, leaves: boolean): Agent | null {
+export function spawnAgent(
+  layout: Layout,
+  rng: Rng,
+  leaves: boolean,
+  openCount: number = Infinity,
+  agents: readonly Agent[] = [],
+): Agent | null {
   const shelf = layout.shelves[Math.floor(rng() * layout.shelves.length)];
   if (!shelf) return null;
   let path: Tile[];
+  let checkoutId: string | null = null;
+  let payAt = -1;
   if (leaves || layout.checkouts.length === 0) {
     const out = findPath(layout.grid, layout.door, shelf);
     const back = out ? [...out].reverse().slice(1) : null;
     if (!out || !back) return null;
     path = [...out, ...back];
   } else {
-    const open = layout.checkouts.filter((c) => !c.broken);
-    const pool = open.length > 0 ? open : layout.checkouts;
+    // Solo cajas con cajero; si no hay ninguna, el cliente se marcha sin comprar.
+    const open = openCheckouts(layout, openCount);
+    if (open.length === 0) {
+      return spawnAgent(layout, rng, true, openCount, agents);
+    }
+    // Caja abierta con menos clientes asignados (empates al azar).
+    const load = (c: CheckoutSpot) => agents.filter((a) => a.checkoutId === c.id).length;
+    const min = Math.min(...open.map(load));
+    const pool = open.filter((c) => load(c) === min);
     const co = pool[Math.floor(rng() * pool.length)];
     if (!co) return null;
+    checkoutId = co.id;
     const r = shopperRoute(layout.grid, layout.door, shelf, co.access);
     if (!r) return null;
     path = [...r.toShelf, ...r.toCheckout.slice(1), ...r.toDoor.slice(1)];
+    payAt = r.toShelf.length + r.toCheckout.length - 2;
   }
   const start = path[0];
   if (!start) return null;
@@ -145,6 +168,9 @@ export function spawnAgent(layout: Layout, rng: Rng, leaves: boolean): Agent | n
     next: 1,
     pauseAt: shelfIdx,
     pauseLeft: SHELF_PAUSE_SEC * (0.6 + rng() * 0.8),
+    checkoutId,
+    payAt,
+    payLeft: PAY_PAUSE_SEC,
     hue: Math.floor(rng() * 360),
   };
 }
@@ -158,6 +184,12 @@ export function stepAgent(a: Agent, dtSec: number): boolean {
     if (a.pauseAt === a.next - 1 && a.pauseLeft > 0) {
       const used = Math.min(budget, a.pauseLeft);
       a.pauseLeft -= used;
+      budget -= used;
+      continue;
+    }
+    if (a.payAt === a.next - 1 && a.payLeft > 0) {
+      const used = Math.min(budget, a.payLeft);
+      a.payLeft -= used;
       budget -= used;
       continue;
     }
@@ -192,7 +224,7 @@ export function stepCrowd(
   crowd: Crowd,
   layout: Layout,
   rng: Rng,
-  live: { potential: number; lost: number },
+  live: { potential: number; lost: number; openCheckouts?: number },
   simMinutes: number,
   dtSec: number,
 ): void {
@@ -206,7 +238,7 @@ export function stepCrowd(
       crowd.carry = 0;
       break;
     }
-    const agent = spawnAgent(layout, rng, rng() < leave);
+    const agent = spawnAgent(layout, rng, rng() < leave, live.openCheckouts ?? Infinity, crowd.agents);
     if (agent) crowd.agents.push(agent);
   }
 }

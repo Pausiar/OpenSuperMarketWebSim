@@ -68,8 +68,10 @@ function simulateHour(ctx: SimCtx, hour: number): void {
 
   const onDuty = onDutyAt(state, state.clock.timeMin);
   const cashiersOnDuty = onDuty.filter((e) => e.role === 'cashier').length;
+  // Una caja sin colocar en el mapa no puede atender a nadie (ni se ve en la tienda).
+  const placed = new Set(state.map.placements.map((p) => p.equipmentId));
   const workingCheckouts = state.store.equipment.filter(
-    (e) => e.type === 'checkout' && !e.broken,
+    (e) => e.type === 'checkout' && !e.broken && placed.has(e.id),
   ).length;
   const openCheckouts = Math.min(cashiersOnDuty, workingCheckouts);
 

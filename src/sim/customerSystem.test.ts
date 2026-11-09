@@ -42,6 +42,14 @@ describe('clientes: sin cajeros y precios', () => {
     expect(today.lost).toBe(today.customers);
   });
 
+  it('las cajas sin colocar en el mapa no cuentan como abiertas', () => {
+    const state = makeState(10);
+    const ids = new Set(state.store.equipment.filter((e) => e.type === 'checkout').map((e) => e.id));
+    state.map.placements = state.map.placements.filter((p) => !ids.has(p.equipmentId));
+    runOpeningHours(state);
+    expect(state.stats.today.served).toBe(0);
+  });
+
   it('con cajeros en turno, atender clientes genera ventas', () => {
     const state = makeState(21);
     runOpeningHours(state);
