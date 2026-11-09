@@ -1,13 +1,14 @@
-import { useMemo, useState } from 'react';
-import { formatDay } from '../../core/time';
-import { productDef } from '../../domain/data/products';
-import { SUPPLIERS, supplierDef } from '../../domain/data/suppliers';
-import { incomingQty, stockOf } from '../../domain/inventory';
-import { placeOrder, quoteUnitCents } from '../../domain/orders';
-import { supplierPriceFactor } from '../../domain/state';
-import { Badge, Card, ErrorBox } from '../components';
-import { money, num, pct } from '../format';
-import { useGame } from '../useGame';
+import { useMemo, useState } from "react";
+import { formatDay } from "../../core/time";
+import { productDef } from "../../domain/data/products";
+import { SUPPLIERS, supplierDef } from "../../domain/data/suppliers";
+import { incomingQty, stockOf } from "../../domain/inventory";
+import { placeOrder, quoteUnitCents } from "../../domain/orders";
+import { supplierPriceFactor } from "../../domain/state";
+import { Badge, Card, ErrorBox } from "../components";
+import { money, num, pct } from "../format";
+import { useGame } from "../useGame";
+import { RestockPanel } from "./RestockPanel";
 
 export function SuppliersScreen() {
   const { state, run } = useGame();
@@ -22,7 +23,8 @@ export function SuppliersScreen() {
   const totalCents = useMemo(
     () =>
       supplier.catalog.reduce(
-        (acc, pid) => acc + (qty[pid] ?? 0) * quoteUnitCents(state, supplierId, pid),
+        (acc, pid) =>
+          acc + (qty[pid] ?? 0) * quoteUnitCents(state, supplierId, pid),
         0,
       ),
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -42,8 +44,8 @@ export function SuppliersScreen() {
     }
   };
 
-  const activeOrders = state.orders.filter((o) => o.status === 'inTransit');
-  const pastOrders = [...state.orders.filter((o) => o.status !== 'inTransit')]
+  const activeOrders = state.orders.filter((o) => o.status === "inTransit");
+  const pastOrders = [...state.orders.filter((o) => o.status !== "inTransit")]
     .reverse()
     .slice(0, 10);
 
@@ -51,13 +53,9 @@ export function SuppliersScreen() {
     <div className="screen">
       <h1>Proveedores y pedidos</h1>
       <ErrorBox message={error} />
-      {okMsg && (
-        <div
-          className="error-box ok-box"
-        >
-          {okMsg}
-        </div>
-      )}
+      {okMsg && <div className="error-box ok-box">{okMsg}</div>}
+
+      <RestockPanel />
 
       <div className="grid cols-4">
         {SUPPLIERS.map((s) => (
@@ -65,8 +63,8 @@ export function SuppliersScreen() {
             key={s.id}
             className="card"
             style={{
-              cursor: 'pointer',
-              borderColor: s.id === supplierId ? 'var(--accent)' : undefined,
+              cursor: "pointer",
+              borderColor: s.id === supplierId ? "var(--accent)" : undefined,
             }}
             onClick={() => {
               setSupplierId(s.id);
@@ -74,13 +72,11 @@ export function SuppliersScreen() {
             }}
           >
             <h2>{s.name}</h2>
-            <p className="dim t-small">
-              {s.description}
-            </p>
+            <p className="dim t-small">{s.description}</p>
             <div
               style={{
-                display: 'flex',
-                flexDirection: 'column',
+                display: "flex",
+                flexDirection: "column",
                 gap: 3,
                 fontSize: 12.5,
                 marginTop: 6,
@@ -106,16 +102,25 @@ export function SuppliersScreen() {
         actions={
           <div className="row">
             {priceEvent > 1 && (
-              <Badge tone="red">Precios +{Math.round((priceEvent - 1) * 100)}% (evento)</Badge>
+              <Badge tone="red">
+                Precios +{Math.round((priceEvent - 1) * 100)}% (evento)
+              </Badge>
             )}
             <strong
               style={{
-                color: totalCents >= supplier.minOrderCents ? 'var(--green)' : 'var(--yellow)',
+                color:
+                  totalCents >= supplier.minOrderCents
+                    ? "var(--green)"
+                    : "var(--yellow)",
               }}
             >
               Total: {money(totalCents)}
             </strong>
-            <button className="primary" disabled={totalCents === 0} onClick={submit}>
+            <button
+              className="primary"
+              disabled={totalCents === 0}
+              onClick={submit}
+            >
               Realizar pedido
             </button>
           </div>
@@ -147,19 +152,22 @@ export function SuppliersScreen() {
                   <td>{def.name}</td>
                   <td className="num">{money(unit)}</td>
                   <td className="num dim">{stockOf(state, pid)}</td>
-                  <td className="num dim">{incomingQty(state, pid) || '—'}</td>
+                  <td className="num dim">{incomingQty(state, pid) || "—"}</td>
                   <td className="num">
                     <input
                       type="number"
                       min="0"
-                      value={q || ''}
+                      value={q || ""}
                       placeholder="0"
                       onChange={(e) =>
-                        setQty({ ...qty, [pid]: Math.max(0, parseInt(e.target.value) || 0) })
+                        setQty({
+                          ...qty,
+                          [pid]: Math.max(0, parseInt(e.target.value) || 0),
+                        })
                       }
                     />
                   </td>
-                  <td className="num">{q > 0 ? money(q * unit) : '—'}</td>
+                  <td className="num">{q > 0 ? money(q * unit) : "—"}</td>
                 </tr>
               );
             })}
@@ -185,7 +193,9 @@ export function SuppliersScreen() {
               <tr key={o.id}>
                 <td className="dim">{o.id}</td>
                 <td>{supplierDef(o.supplierId).name}</td>
-                <td className="num">{num(o.lines.reduce((a, l) => a + l.qty, 0))} uds</td>
+                <td className="num">
+                  {num(o.lines.reduce((a, l) => a + l.qty, 0))} uds
+                </td>
                 <td className="num">{money(o.totalCents)}</td>
                 <td className="dim">{formatDay(o.placedDay)}</td>
                 <td>
@@ -201,15 +211,19 @@ export function SuppliersScreen() {
               <tr key={o.id} className="is-dim">
                 <td className="dim">{o.id}</td>
                 <td>{supplierDef(o.supplierId).name}</td>
-                <td className="num">{num(o.lines.reduce((a, l) => a + l.qty, 0))} uds</td>
+                <td className="num">
+                  {num(o.lines.reduce((a, l) => a + l.qty, 0))} uds
+                </td>
                 <td className="num">{money(o.totalCents)}</td>
                 <td className="dim">{formatDay(o.placedDay)}</td>
                 <td className="dim">
-                  {o.deliveredDay !== undefined ? formatDay(o.deliveredDay) : '—'}
+                  {o.deliveredDay !== undefined
+                    ? formatDay(o.deliveredDay)
+                    : "—"}
                 </td>
                 <td>
-                  <Badge tone={o.status === 'delivered' ? 'green' : undefined}>
-                    {o.status === 'delivered' ? 'Entregado' : 'Anulado'}
+                  <Badge tone={o.status === "delivered" ? "green" : undefined}>
+                    {o.status === "delivered" ? "Entregado" : "Anulado"}
                   </Badge>
                 </td>
               </tr>

@@ -1,0 +1,76 @@
+/* Hallmark · shape: app screen · genre: playful · theme: custom
+ * paper: oklch(17% 0.012 60) · accent: oklch(66% 0.19 30) · display: ui-rounded system stack · body: system-ui stack
+ * nav: existing rail · signature: the supplier subtotal strips under the restock table
+ * states: empty text in panel, errors and results in aria-live region, loading n/a · scope: app
+ * axes: dark/rounded-sans/warm · posture: restrained, tomato marks action only · contrast: pass · v2.0.0 */
+/* Hallmark · pre-emit critique: P4 H4 E4 S4 R4 V4 · weakest: V, panel reuses the card surface */
+
+/* Reposición rápida (RestockPanel). Solo tokens de index.css. */
+
+.restock-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-2);
+}
+.restock-live:empty {
+  display: none;
+}
+.restock-msg {
+  margin: 0 0 var(--sp-3);
+  padding: var(--sp-2) var(--sp-3);
+  border: 1px solid var(--border);
+  border-radius: var(--r-2);
+  font-size: var(--text-sm);
+}
+.restock-msg.is-ok {
+  border-color: var(--green);
+  color: var(--green);
+}
+.restock-msg.is-warn {
+  border-color: var(--yellow);
+  color: var(--yellow);
+}
+.restock-scroll {
+  overflow-x: auto;
+  max-width: 100%;
+}
+.restock-table td {
+  vertical-align: middle;
+}
+.restock-qty {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-1);
+}
+.restock-qty input {
+  width: 64px;
+}
+.restock-blocked {
+  margin: var(--sp-3) 0 0;
+  padding-left: var(--sp-4);
+}
+.restock-groups {
+  display: grid;
+  gap: var(--sp-2);
+  margin-top: var(--sp-4);
+}
+.restock-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sp-1) var(--sp-4);
+  align-items: baseline;
+  padding: var(--sp-2) var(--sp-3);
+  background: var(--bg-panel-2);
+  border-radius: var(--r-2);
+}
+.restock-group .num {
+  margin-left: auto;
+}
+.restock-total {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: var(--sp-2) var(--sp-4);
+  margin-top: var(--sp-3);
+  font-size: var(--text-md);
+}

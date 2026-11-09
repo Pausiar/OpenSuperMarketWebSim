@@ -420,9 +420,9 @@
     "semantic_hash": ""
   },
   "src/ui/screens/InventoryScreen.tsx": {
-    "mtime": 1794182186.9247615,
-    "seen": 1794182408.5017834,
-    "ast_hash": "de99052e9efefe05f3b1fe89ba34f5f2",
+    "mtime": 1794229541.357233,
+    "seen": 1794229556.9452314,
+    "ast_hash": "191db628c0612f635839e0a7b2db2405",
     "semantic_hash": ""
   },
   "src/ui/screens/ProductsScreen.tsx": {
@@ -456,9 +456,9 @@
     "semantic_hash": ""
   },
   "src/ui/screens/SuppliersScreen.tsx": {
-    "mtime": 1794182428.1824884,
-    "seen": 1794182442.148455,
-    "ast_hash": "fe59428e8d200ecd3d487530f42f3e28",
+    "mtime": 1794229541.357233,
+    "seen": 1794229556.9452407,
+    "ast_hash": "fee1a04f6ee573761fa0522fb0cb28e7",
     "semantic_hash": ""
   },
   "src/ui/useGame.ts": {
@@ -2469,6 +2469,24 @@
     "mtime": 1794188107.807301,
     "seen": 1794188139.4125688,
     "ast_hash": "dc6aa2ce0a4e0cd2ff3cf4cc0065e50d",
+    "semantic_hash": ""
+  },
+  "src/domain/restock.test.ts": {
+    "mtime": 1794229493.305613,
+    "seen": 1794229556.945167,
+    "ast_hash": "3889088faadb278770072a2e94245ee5",
+    "semantic_hash": ""
+  },
+  "src/domain/restock.ts": {
+    "mtime": 1794229457.1666272,
+    "seen": 1794229556.9451694,
+    "ast_hash": "27746e76140044db4a1b1faf78b17ac2",
+    "semantic_hash": ""
+  },
+  "src/ui/screens/RestockPanel.tsx": {
+    "mtime": 1794229527.1146314,
+    "seen": 1794229556.9452353,
+    "ast_hash": "ff322248a3b84e4c5cd12e52203027b7",
     "semantic_hash": ""
   },
   "package-lock.json": {

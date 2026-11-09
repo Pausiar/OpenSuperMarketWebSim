@@ -1,24 +1,38 @@
-import { dayOf, formatDay } from '../../core/time';
-import { PRODUCTS, type StorageType } from '../../domain/data/products';
-import { capacityByStorage, incomingQty, stockByStorage, stockOf } from '../../domain/inventory';
-import { Badge, Card, Progress } from '../components';
-import { money, num } from '../format';
-import { useGame } from '../useGame';
+import { dayOf, formatDay } from "../../core/time";
+import { PRODUCTS, type StorageType } from "../../domain/data/products";
+import {
+  capacityByStorage,
+  incomingQty,
+  stockByStorage,
+  stockOf,
+} from "../../domain/inventory";
+import { Badge, Card, Progress } from "../components";
+import { money, num } from "../format";
+import { useGame } from "../useGame";
+import { useGameStore } from "../../state/gameStore";
+import { planRestock } from "../../domain/restock";
 
 const STORAGE_LABEL: Record<StorageType, string> = {
-  ambient: 'Estanterías (ambiente)',
-  chilled: 'Refrigerado',
-  frozen: 'Congelado',
+  ambient: "Estanterías (ambiente)",
+  chilled: "Refrigerado",
+  frozen: "Congelado",
 };
 
 export function InventoryScreen() {
   const { state } = useGame();
   const day = dayOf(state.clock.timeMin);
+  const setScreen = useGameStore((s) => s.setScreen);
+  const lowCount = planRestock(state).groups.reduce(
+    (a, g) => a + g.lines.length,
+    0,
+  );
   const stock = stockByStorage(state);
   const capacity = capacityByStorage(state);
 
   const expiringSoon = state.lots
-    .filter((l) => l.expiresDay !== null && l.expiresDay - day <= 2 && l.qty > 0)
+    .filter(
+      (l) => l.expiresDay !== null && l.expiresDay - day <= 2 && l.qty > 0,
+    )
     .sort((a, b) => (a.expiresDay ?? 0) - (b.expiresDay ?? 0));
 
   const totalUnits = state.lots.reduce((a, l) => a + l.qty, 0);
@@ -26,22 +40,34 @@ export function InventoryScreen() {
   return (
     <div className="screen">
       <h1>Inventario</h1>
+      {lowCount > 0 && (
+        <div>
+          <button className="primary" onClick={() => setScreen("suppliers")}>
+            Reponer {lowCount} {lowCount === 1 ? "producto" : "productos"}
+          </button>
+        </div>
+      )}
 
       <div className="grid cols-3">
-        {(['ambient', 'chilled', 'frozen'] as StorageType[]).map((st) => (
+        {(["ambient", "chilled", "frozen"] as StorageType[]).map((st) => (
           <Card key={st} title={STORAGE_LABEL[st]}>
             <div className="list-row">
               <span>
                 {num(stock[st])} / {num(capacity[st])} unidades
               </span>
               <span className="dim">
-                {capacity[st] > 0 ? Math.round((stock[st] / capacity[st]) * 100) : 0}%
+                {capacity[st] > 0
+                  ? Math.round((stock[st] / capacity[st]) * 100)
+                  : 0}
+                %
               </span>
             </div>
             <Progress
               value={stock[st]}
               max={capacity[st]}
-              tone={stock[st] / Math.max(capacity[st], 1) > 0.9 ? 'red' : undefined}
+              tone={
+                stock[st] / Math.max(capacity[st], 1) > 0.9 ? "red" : undefined
+              }
             />
             {capacity[st] === 0 && (
               <small className="t-bad">
@@ -71,7 +97,11 @@ export function InventoryScreen() {
                     <td>{def.name}</td>
                     <td className="num">{l.qty}</td>
                     <td>
-                      <Badge tone={expired || l.expiresDay === day ? 'red' : 'yellow'}>
+                      <Badge
+                        tone={
+                          expired || l.expiresDay === day ? "red" : "yellow"
+                        }
+                      >
                         {formatDay(l.expiresDay ?? 0)}
                       </Badge>
                     </td>
@@ -80,7 +110,9 @@ export function InventoryScreen() {
               })}
             </tbody>
           </table>
-          <small className="dim">Considera bajar el precio para venderlo antes de perderlo.</small>
+          <small className="dim">
+            Considera bajar el precio para venderlo antes de perderlo.
+          </small>
         </Card>
       )}
 
@@ -102,19 +134,27 @@ export function InventoryScreen() {
               const ps = state.products[p.id];
               const stockQty = stockOf(state, p.id);
               const incoming = incomingQty(state, p.id);
-              const lots = state.lots.filter((l) => l.productId === p.id && l.expiresDay !== null);
-              const nextExpiry = lots.length ? Math.min(...lots.map((l) => l.expiresDay!)) : null;
+              const lots = state.lots.filter(
+                (l) => l.productId === p.id && l.expiresDay !== null,
+              );
+              const nextExpiry = lots.length
+                ? Math.min(...lots.map((l) => l.expiresDay!))
+                : null;
               const low = ps.active && stockQty < ps.minStock;
               return (
-                <tr key={p.id} className={ps.active ? undefined : 'is-dim'}>
+                <tr key={p.id} className={ps.active ? undefined : "is-dim"}>
                   <td>{p.name}</td>
                   <td className="num">{stockQty}</td>
-                  <td className="num dim">{incoming > 0 ? `+${incoming}` : '—'}</td>
+                  <td className="num dim">
+                    {incoming > 0 ? `+${incoming}` : "—"}
+                  </td>
                   <td className="num dim">{ps.minStock}</td>
                   <td className="dim">
-                    {nextExpiry !== null ? formatDay(nextExpiry) : 'No caduca'}
+                    {nextExpiry !== null ? formatDay(nextExpiry) : "No caduca"}
                   </td>
-                  <td className="num dim">{money(stockQty * p.baseCostCents)}</td>
+                  <td className="num dim">
+                    {money(stockQty * p.baseCostCents)}
+                  </td>
                   <td>
                     {!ps.active ? (
                       <Badge>Retirado</Badge>

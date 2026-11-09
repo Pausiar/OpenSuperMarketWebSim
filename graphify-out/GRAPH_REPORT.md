@@ -1,17 +1,17 @@
 # Graph Report - OpenSuperMarketWebSim  (2026-11-09)
 
 ## Corpus Check
-- 347 files · ~427,001 words
+- 350 files · ~429,502 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 10 file(s) not represented in the graph (top: .css 8, (none) 2)
+- Unclassified: 11 file(s) not represented in the graph (top: .css 9, (none) 2)
 
 ## Summary
-- 3375 nodes · 5887 edges · 259 communities (245 shown, 14 thin omitted)
+- 3397 nodes · 6009 edges · 262 communities (249 shown, 13 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 158 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `884f5b9a`
+- Built from commit: `92c6cdf0`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -19,13 +19,13 @@
 - sloplint.mjs
 - pull-hig.mjs
 - App.tsx
-- customerSystem.ts
+- time.ts
 - refcheck.mjs
 - theme.mjs
 - storeOps.ts
 - pages.yml
 - package.json
-- inventory.ts
+- restock.ts
 - sprites.ts
 - report
 - getAttr
@@ -34,12 +34,12 @@
 - Typography
 - ref_node_fs
 - Live Activities
-- helpers.ts
+- balance.test.ts
 - Widgets
 - macrostructures.md
 - Apple Pay
 - sloplint-render.mjs
-- StoreCanvas.tsx
+- MainMenu.tsx
 - sf-symbols.md
 - Machine learning
 - Apple Design Skill
@@ -232,7 +232,7 @@
 - Supermarket Tycoon
 - Action sheets
 - StoreScreen.tsx
-- mapDrag.test.ts
+- dayOf
 - sheets.md
 - Collections
 - Color wells
@@ -250,12 +250,12 @@
 - ponytail-review/SKILL.md
 - Ponytail
 - Cross-platform translation
-- map.ts
+- tutorial.ts
 - index.tsx
-- state.ts
+- GameShell
 - path-controls.md
 - ponytail-debt/SKILL.md
-- tailwind-pass/Hero.tsx
+- render.ts
 - tsconfig.json
 - CLAUDE.md
 - .claude/CLAUDE.md
@@ -274,18 +274,21 @@
 - gyro-and-accelerometer.md
 - Panels
 - Web views
+- pixel.test.ts
+- all
+- repeat
 
 ## God Nodes (most connected - your core abstractions)
 1. `report()` - 90 edges
 2. `trunc()` - 44 edges
 3. `resolveVars()` - 42 edges
-4. `dayOf()` - 40 edges
-5. `GameState` - 36 edges
-6. `SimCtx` - 26 edges
-7. `money()` - 26 edges
-8. `getAttr()` - 25 edges
-9. `useGame()` - 25 edges
-10. `record()` - 25 edges
+4. `dayOf()` - 42 edges
+5. `GameState` - 37 edges
+6. `money()` - 29 edges
+7. `SimCtx` - 27 edges
+8. `useGame()` - 27 edges
+9. `getAttr()` - 25 edges
+10. `Card()` - 25 edges
 
 ## Surprising Connections (you probably didn't know these)
 - `Surfaces` --references--> `record()`  [INFERRED]
@@ -302,7 +305,7 @@
 ## Import Cycles
 - None detected.
 
-## Communities (259 total, 14 thin omitted)
+## Communities (262 total, 13 thin omitted)
 
 ### Community 0 - "sloplint.mjs"
 Cohesion: 0.03
@@ -313,12 +316,12 @@ Cohesion: 0.07
 Nodes (65): abstractOf(), ALL_PLATFORMS, anchorEntries(), anchorMapFor(), cellText(), collapseBlankLines(), collectReferences(), coveredPlatformsLine() (+57 more)
 
 ### Community 2 - "App.tsx"
-Cohesion: 0.13
-Nodes (42): react, App(), GameShell(), NAV, SCREENS, SPEED_NAME, formatDay(), CATEGORY_NAMES (+34 more)
+Cohesion: 0.18
+Nodes (31): formatDay(), monthlyPaymentCents(), CATEGORY_NAMES, BillStatus, giveRaise(), setSellingPrice(), toggleProductActive(), Severity (+23 more)
 
-### Community 3 - "customerSystem.ts"
-Cohesion: 0.09
-Nodes (32): ACCOUNTING_HOUR, CLOSE_HOUR, DAYS_PER_MONTH, DAYS_PER_WEEK, DAYS_PER_YEAR, formatClock(), formatDate(), formatDateTime() (+24 more)
+### Community 3 - "time.ts"
+Cohesion: 0.11
+Nodes (24): DAYS_PER_WEEK, DAYS_PER_YEAR, formatClock(), formatDate(), formatDateTime(), MIN_PER_HOUR, MONTH_NAMES, MONTHS_PER_YEAR (+16 more)
 
 ### Community 4 - "refcheck.mjs"
 Cohesion: 0.04
@@ -330,7 +333,7 @@ Nodes (51): addLog(), ADJUST, args, ASK, BASE_CUSTOM, buildIndex(), check(), con
 
 ### Community 6 - "storeOps.ts"
 Cohesion: 0.12
-Nodes (34): dayOf(), monthLabel(), BLACKOUT_AFTER_OVERDUE_DAYS, KWH_PRICE_CENTS, LATE_FEE_RATE, LOAN_OFFER_MAP, LOAN_OFFERS, LoanOfferDef (+26 more)
+Nodes (29): ACCOUNTING_HOUR, DAYS_PER_MONTH, monthLabel(), BLACKOUT_AFTER_OVERDUE_DAYS, KWH_PRICE_CENTS, LATE_FEE_RATE, LOAN_OFFER_MAP, LOAN_OFFERS (+21 more)
 
 ### Community 7 - "pages.yml"
 Cohesion: 0.07
@@ -340,13 +343,13 @@ Nodes (30): runs-on, steps, concurrency, cancel-in-progress, group, environment,
 Cohesion: 0.07
 Nodes (38): dependencies, react@^19.2.8, react-dom@^19.2.8, zod@^4.4.3, zustand@^5.0.15, devDependencies, oxlint@^1.75.0, prettier@^3.9.6 (+30 more)
 
-### Community 9 - "inventory.ts"
+### Community 9 - "restock.ts"
 Cohesion: 0.15
-Nodes (29): EquipmentDef, PRODUCT_MAP, ProductCategory, ProductDef, productDef(), PRODUCTS, StorageType, SUPPLIER_MAP (+21 more)
+Nodes (32): productDef(), SUPPLIER_MAP, SupplierDef, supplierDef(), SUPPLIERS, capacityByStorage(), incomingByStorage(), incomingQty() (+24 more)
 
 ### Community 10 - "sprites.ts"
-Cohesion: 0.05
-Nodes (61): isPaletteKey(), PALETTE, PALETTE_KEYS, PaletteKey, TRANSPARENT, all(), cache, createCanvas() (+53 more)
+Cohesion: 0.07
+Nodes (26): ProductCategory, BOX, CHECKOUT, CUSTOMER_SWAPS, customerCache, Direction, DOOR, DOOR_OPEN (+18 more)
 
 ### Community 11 - "report"
 Cohesion: 0.08
@@ -376,9 +379,9 @@ Nodes (10): globalRoot(), script, png, script, main(), OK(), script, dir (+2 mor
 Cohesion: 0.07
 Nodes (28): Adding transitions and animating content updates, Anatomy, Best practices, CarPlay, CarPlay dimensions, Change log, Choosing colors, Compact (+20 more)
 
-### Community 18 - "helpers.ts"
-Cohesion: 0.11
-Nodes (24): vitest, MIN_PER_DAY, BANKRUPTCY_DEBT_DAYS, BANKRUPTCY_OVERDUE_BILLS, bankruptcyReason(), countOverdueBills(), DEBT_WARNING_DAYS, gameOverMessage() (+16 more)
+### Community 18 - "balance.test.ts"
+Cohesion: 0.16
+Nodes (16): vitest, MIN_PER_DAY, hire(), setMinStock(), setup(), pushNotification(), hireBaselineStaff(), SUPPLIER_BY_STORAGE (+8 more)
 
 ### Community 19 - "Widgets"
 Cohesion: 0.08
@@ -396,9 +399,9 @@ Nodes (23): Apple Pay, Apple Pay button, Apple Pay mark, Black, Button size and 
 Cohesion: 0.18
 Nodes (21): CHROMES, contrast(), focusRing(), frames(), hideStyles(), inventory(), isUrl(), lineBreaks() (+13 more)
 
-### Community 24 - "StoreCanvas.tsx"
-Cohesion: 0.08
-Nodes (20): MapState, HourSnapshot, drawStorefront(), Piece, Storefront(), storefrontPieces(), EquipmentKind, dirBetween() (+12 more)
+### Community 24 - "MainMenu.tsx"
+Cohesion: 0.12
+Nodes (12): HeroProps, react, deleteGame(), listSaves(), readIndex(), ErrorBox(), drawStorefront(), MainMenu() (+4 more)
 
 ### Community 25 - "sf-symbols.md"
 Cohesion: 0.18
@@ -421,12 +424,12 @@ Cohesion: 0.10
 Nodes (19): compilerOptions, allowArbitraryExtensions, allowImportingTsExtensions, erasableSyntaxOnly, jsx, lib, module, moduleDetection (+11 more)
 
 ### Community 30 - "newGame.ts"
-Cohesion: 0.10
-Nodes (21): Rng, generateApplicant(), refreshApplicants(), addLot(), createNewGame(), emptyDailyStats(), CURRENT_SAVE_VERSION, deleteGame() (+13 more)
+Cohesion: 0.06
+Nodes (42): Rng, Speed, Role, Bill, Loan, Transaction, Applicant, dailyEmployeeUpkeep() (+34 more)
 
 ### Community 31 - "SimCtx"
 Cohesion: 0.14
-Nodes (5): SimCtx, GameEngine, SimSystem, GameEvent, GameStore
+Nodes (12): CLOSE_HOUR, onDutyAt(), SimCtx, billingSystem, deliverySystem, employeeSystem, GameEngine, SimSystem (+4 more)
 
 ### Community 32 - "App Clips"
 Cohesion: 0.11
@@ -489,8 +492,8 @@ Cohesion: 0.14
 Nodes (14): Black, Button size and corner radius, Change log, Collecting data, Creating a custom Sign in with Apple button, Custom buttons with a logo and text, Custom logo-only buttons, Displaying buttons (+6 more)
 
 ### Community 47 - "StoreCanvas.tsx"
-Cohesion: 0.11
-Nodes (40): createMap(), tilesOf(), setup(), Agent, buildLayout(), CheckoutSpot, createRng(), Crowd (+32 more)
+Cohesion: 0.08
+Nodes (54): MapState, tilesOf(), HourSnapshot, Agent, buildLayout(), CheckoutSpot, createRng(), Crowd (+46 more)
 
 ### Community 48 - "Augmented reality"
 Cohesion: 0.15
@@ -1165,12 +1168,12 @@ Cohesion: 0.40
 Nodes (5): Action sheets, Best practices, Mobile (iOS, iPadOS), Platform considerations, Related guidelines
 
 ### Community 216 - "StoreScreen.tsx"
-Cohesion: 0.19
-Nodes (21): EQUIPMENT, EQUIPMENT_MAP, EquipmentType, REPAIR_COST_FACTOR, levelDef(), STORE_LEVELS, StoreLevelDef, CAMPAIGN_MAP (+13 more)
+Cohesion: 0.10
+Nodes (51): EQUIPMENT, EQUIPMENT_MAP, EquipmentType, REPAIR_COST_FACTOR, levelDef(), STORE_LEVELS, StoreLevelDef, CAMPAIGN_MAP (+43 more)
 
-### Community 217 - "mapDrag.test.ts"
-Cohesion: 0.22
-Nodes (16): footprint(), placeEquipment(), canMoveTo(), clampedTarget(), clampOffset(), footprintOf(), pointerToTile(), Rot (+8 more)
+### Community 217 - "dayOf"
+Cohesion: 0.18
+Nodes (21): dayOf(), isCustomerHour(), EquipmentDef, PRODUCT_MAP, ProductDef, PRODUCTS, StorageType, effectiveProductivity() (+13 more)
 
 ### Community 218 - "sheets.md"
 Cohesion: 0.11
@@ -1209,8 +1212,8 @@ Cohesion: 0.40
 Nodes (5): Best practices, Desktop (macOS), Platform considerations, Related guidelines, Steppers
 
 ### Community 227 - "ScheduleScreen.tsx"
-Cohesion: 0.31
-Nodes (12): formatMinutesAsHM(), OPEN_HOUR, WEEKDAY_NAMES, addShift(), removeShift(), ScheduleIssue, scheduleIssues(), weeklyMinutes() (+4 more)
+Cohesion: 0.20
+Nodes (17): formatMinutesAsHM(), OPEN_HOUR, WEEKDAY_NAMES, ROLE_MAP, RoleDef, ROLES, addShift(), removeShift() (+9 more)
 
 ### Community 228 - "design.md: the locked system"
 Cohesion: 0.40
@@ -1240,17 +1243,17 @@ Nodes (4): Before you write, Levels, Ponytail, The smallest complete change
 Cohesion: 0.50
 Nodes (3): Conventions to check, Cross-platform translation, Vocabulary
 
-### Community 235 - "map.ts"
-Cohesion: 0.27
-Nodes (11): canPlace(), doorTiles(), inStorageZone(), isWall(), LayoutEffects, layoutEffects(), occupiedTiles(), Placement (+3 more)
+### Community 235 - "tutorial.ts"
+Cohesion: 0.16
+Nodes (16): DEFAULT_PROGRESS, isStepDone(), key(), loadProgress(), Predicate, saveProgress(), TUTORIAL_STEPS, tutorialPredicates (+8 more)
 
 ### Community 236 - "index.tsx"
-Cohesion: 0.08
-Nodes (41): SpeedLabel(), DEFAULT_PROGRESS, isStepDone(), key(), loadProgress(), Predicate, saveProgress(), TUTORIAL_STEPS (+33 more)
+Cohesion: 0.11
+Nodes (31): NAV, SCREENS, SPEED_NAME, SpeedLabel(), SPEEDS, Modal(), GameOverModal(), GameOverModalProps (+23 more)
 
-### Community 237 - "state.ts"
-Cohesion: 0.10
-Nodes (27): Speed, Role, ROLE_MAP, RoleDef, ROLES, Bill, Loan, Transaction (+19 more)
+### Community 237 - "GameShell"
+Cohesion: 0.16
+Nodes (5): App(), GameShell(), GameStore, Toast(), ToastStack()
 
 ### Community 238 - "path-controls.md"
 Cohesion: 0.40
@@ -1259,6 +1262,10 @@ Nodes (4): Best practices, Path controls, Platform considerations, Related guide
 ### Community 239 - "ponytail-debt/SKILL.md"
 Cohesion: 0.50
 Nodes (3): Boundaries, Output, Scan
+
+### Community 240 - "render.ts"
+Cohesion: 0.19
+Nodes (11): isPaletteKey(), PALETTE, PALETTE_KEYS, PaletteKey, TRANSPARENT, cache, createCanvas(), drawSprite() (+3 more)
 
 ### Community 244 - "Outline views"
 Cohesion: 0.50
@@ -1284,23 +1291,35 @@ Nodes (5): Best practices, HUD-style panels, Panels, Platform considerations, Re
 Cohesion: 0.50
 Nodes (3): Best practices, Platform considerations, Web views
 
+### Community 259 - "pixel.test.ts"
+Cohesion: 0.22
+Nodes (9): BROKEN_OVERLAY, CATEGORIES, categoryFor(), CHECKOUT_SCREEN, CUSTOMER_VARIANTS, DIRECTIONS, EQUIPMENT_TYPES, spriteFor() (+1 more)
+
+### Community 260 - "all"
+Cohesion: 0.33
+Nodes (9): all(), baseFrames(), cashierSprite(), customerSprite(), mirrorRows(), overlay(), stockerSprite(), swapPalette() (+1 more)
+
+### Community 261 - "repeat"
+Cohesion: 0.33
+Nodes (7): figure(), goodsRows(), makeCooler(), makeShelf(), padSides(), repeat(), SHELF_SPRITES
+
 ## Knowledge Gaps
-- **14 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+- **13 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `clamp()` connect `Responsive` to `customerSystem.ts`?**
-  _High betweenness centrality (0.083) - this node is a cross-community bridge._
+- **Why does `clamp()` connect `Responsive` to `dayOf`?**
+  _High betweenness centrality (0.092) - this node is a cross-community bridge._
 - **Should `sloplint.mjs` be split into smaller, more focused modules?**
   _Cohesion score 0.03110047846889952 - nodes in this community are weakly interconnected._
 - **Should `pull-hig.mjs` be split into smaller, more focused modules?**
   _Cohesion score 0.06603346901854365 - nodes in this community are weakly interconnected._
-- **Should `App.tsx` be split into smaller, more focused modules?**
-  _Cohesion score 0.12682641729982466 - nodes in this community are weakly interconnected._
-- **Should `customerSystem.ts` be split into smaller, more focused modules?**
-  _Cohesion score 0.08636977058029689 - nodes in this community are weakly interconnected._
+- **Should `time.ts` be split into smaller, more focused modules?**
+  _Cohesion score 0.10591133004926108 - nodes in this community are weakly interconnected._
 - **Should `refcheck.mjs` be split into smaller, more focused modules?**
   _Cohesion score 0.03636363636363636 - nodes in this community are weakly interconnected._
 - **Should `theme.mjs` be split into smaller, more focused modules?**
   _Cohesion score 0.0889894419306184 - nodes in this community are weakly interconnected._
+- **Should `storeOps.ts` be split into smaller, more focused modules?**
+  _Cohesion score 0.11764705882352941 - nodes in this community are weakly interconnected._
