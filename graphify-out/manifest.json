@@ -450,9 +450,9 @@
     "semantic_hash": ""
   },
   "src/ui/screens/StoreScreen.tsx": {
-    "mtime": 1794188647.4893548,
-    "seen": 1794188702.5065794,
-    "ast_hash": "d26575fb75f5b7e7e877dafa1f587fce",
+    "mtime": 1794189581.8201237,
+    "seen": 1794189605.9969935,
+    "ast_hash": "1a5d18d2319111eb17ea11807beae465",
     "semantic_hash": ""
   },
   "src/ui/screens/SuppliersScreen.tsx": {

@@ -1,7 +1,7 @@
 # Graph Report - OpenSuperMarketWebSim  (2026-11-09)
 
 ## Corpus Check
-- 347 files · ~426,865 words
+- 347 files · ~427,001 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 10 file(s) not represented in the graph (top: .css 8, (none) 2)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `6a619c60`
+- Built from commit: `884f5b9a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -1291,7 +1291,7 @@ Nodes (3): Best practices, Platform considerations, Web views
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `clamp()` connect `Responsive` to `customerSystem.ts`?**
-  _High betweenness centrality (0.080) - this node is a cross-community bridge._
+  _High betweenness centrality (0.083) - this node is a cross-community bridge._
 - **Should `sloplint.mjs` be split into smaller, more focused modules?**
   _Cohesion score 0.03110047846889952 - nodes in this community are weakly interconnected._
 - **Should `pull-hig.mjs` be split into smaller, more focused modules?**

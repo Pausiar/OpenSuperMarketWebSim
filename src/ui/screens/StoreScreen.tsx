@@ -1,4 +1,10 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 import { dayOf } from "../../core/time";
 import {
   EQUIPMENT,
@@ -48,8 +54,9 @@ import {
 
 type MapView = "live" | "edit";
 
-const SCALE = 2;
-const TILE_PX = TILE_SRC * SCALE;
+/** Escala entera del editor: llena el ancho disponible, entre 2x y 4x. */
+const MIN_SCALE = 2;
+const MAX_SCALE = 4;
 
 function getCtx(c: HTMLCanvasElement | null): CanvasRenderingContext2D | null {
   try {
@@ -63,10 +70,12 @@ function getCtx(c: HTMLCanvasElement | null): CanvasRenderingContext2D | null {
 function TerrainCanvas(props: {
   w: number;
   h: number;
+  scale: number;
   isDoor: (x: number, y: number) => boolean;
 }) {
   const ref = useRef<HTMLCanvasElement>(null);
-  const { w, h, isDoor } = props;
+  const { w, h, scale, isDoor } = props;
+  const tile = TILE_SRC * scale;
   useEffect(() => {
     const ctx = getCtx(ref.current);
     if (!ctx) return;
@@ -86,16 +95,16 @@ function TerrainCanvas(props: {
           key = `floor${v}`;
           rows = tileSprite("floor", v);
         }
-        drawSprite(ctx, `t:${key}`, rows, x * TILE_PX, y * TILE_PX, SCALE);
+        drawSprite(ctx, `t:${key}`, rows, x * tile, y * tile, scale);
       }
-  }, [w, h, isDoor]);
+  }, [w, h, isDoor, scale, tile]);
   return (
     <canvas
       ref={ref}
       aria-hidden="true"
       className="map-canvas"
-      width={w * TILE_PX}
-      height={h * TILE_PX}
+      width={w * tile}
+      height={h * tile}
     />
   );
 }
@@ -106,31 +115,33 @@ function PieceCanvas(props: {
   equipmentId: string;
   fp: { w: number; h: number };
   broken: boolean;
+  scale: number;
 }) {
   const ref = useRef<HTMLCanvasElement>(null);
-  const { type, equipmentId, fp, broken } = props;
+  const { type, equipmentId, fp, broken, scale } = props;
+  const tile = TILE_SRC * scale;
   useEffect(() => {
     const ctx = getCtx(ref.current);
     if (!ctx) return;
     const rows = spriteFor(type, equipmentId);
     for (let i = 0; i < fp.w; i++)
       for (let j = 0; j < fp.h; j++) {
-        const x = i * TILE_PX;
-        const y = j * TILE_PX;
-        drawSprite(ctx, `e:${type}:${equipmentId}`, rows, x, y, SCALE);
+        const x = i * tile;
+        const y = j * tile;
+        drawSprite(ctx, `e:${type}:${equipmentId}`, rows, x, y, scale);
         if (type === "checkout" && i === 0 && j === 0 && !broken)
-          drawSprite(ctx, "e:screen", CHECKOUT_SCREEN, x, y, SCALE);
+          drawSprite(ctx, "e:screen", CHECKOUT_SCREEN, x, y, scale);
         if (broken)
-          drawSprite(ctx, "e:broken0", BROKEN_OVERLAY[0], x, y, SCALE);
+          drawSprite(ctx, "e:broken0", BROKEN_OVERLAY[0], x, y, scale);
       }
-  }, [type, equipmentId, fp.w, fp.h, broken]);
+  }, [type, equipmentId, fp.w, fp.h, broken, scale, tile]);
   return (
     <canvas
       ref={ref}
       aria-hidden="true"
       className="map-canvas"
-      width={fp.w * TILE_PX}
-      height={fp.h * TILE_PX}
+      width={fp.w * tile}
+      height={fp.h * tile}
     />
   );
 }
@@ -380,9 +391,29 @@ function MapEditor(props: { onError: (e: string | null) => void }) {
   const [note, setNote] = useState("");
   const dragRef = useRef<DragState | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
-  const TILE = TILE_PX;
+  const wrapRef = useRef<HTMLDivElement>(null);
   const map = state.map;
   const door = doorTiles(map);
+  const [scale, setScale] = useState(MIN_SCALE);
+  const TILE = TILE_SRC * scale;
+
+  // Escala entera según el ancho del contenedor; si no cabe, el mapa hace scroll dentro.
+  useLayoutEffect(() => {
+    const el = wrapRef.current;
+    if (!el) return;
+    const measure = () => {
+      const fit = Math.floor(el.clientWidth / (map.w * TILE_SRC));
+      setScale(Math.min(MAX_SCALE, Math.max(MIN_SCALE, fit)));
+    };
+    measure();
+    if (typeof ResizeObserver === "undefined") {
+      window.addEventListener("resize", measure);
+      return () => window.removeEventListener("resize", measure);
+    }
+    const ro = new ResizeObserver(measure);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, [map.w]);
 
   const selectedPlacement =
     map.placements.find((p) => p.equipmentId === selectedId) ?? null;
@@ -445,8 +476,14 @@ function MapEditor(props: { onError: (e: string | null) => void }) {
   };
 
   const pointerTile = (e: { clientX: number; clientY: number }): Tile => {
-    const r = gridRef.current!.getBoundingClientRect();
-    return pointerToTile(e.clientX, e.clientY, r, TILE);
+    const g = gridRef.current!;
+    const r = g.getBoundingClientRect();
+    return pointerToTile(
+      e.clientX,
+      e.clientY,
+      { left: r.left + g.clientLeft, top: r.top + g.clientTop },
+      TILE,
+    );
   };
 
   const onPiecePointerDown = (
@@ -590,13 +627,18 @@ function MapEditor(props: { onError: (e: string | null) => void }) {
         {note}
       </div>
 
-      <div className="map-wrap">
+      <div className="map-wrap" ref={wrapRef}>
         <div
           ref={gridRef}
           className="map-grid"
           style={{ width: map.w * TILE, height: map.h * TILE }}
         >
-          <TerrainCanvas w={map.w} h={map.h} isDoor={isDoor} />
+          <TerrainCanvas
+            w={map.w}
+            h={map.h}
+            scale={scale}
+            isDoor={isDoor}
+          />
           {Array.from({ length: map.h }, (_, y) =>
             Array.from({ length: map.w }, (_, x) => (
               <div
@@ -645,6 +687,7 @@ function MapEditor(props: { onError: (e: string | null) => void }) {
                   equipmentId={eq.id}
                   fp={fp}
                   broken={eq.broken}
+                  scale={scale}
                 />
               </div>
             );
@@ -666,6 +709,7 @@ function MapEditor(props: { onError: (e: string | null) => void }) {
                 equipmentId={drag.id}
                 fp={ghostFp}
                 broken={false}
+                scale={scale}
               />
             </div>
           )}

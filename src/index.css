@@ -31,7 +31,6 @@
   /* map and floor-plan materials */
   --map-bg: oklch(14% 0.012 60);
   --map-floor: oklch(19.5% 0.014 62);
-  --map-floor-hover: oklch(27% 0.02 65);
   --map-wall: oklch(36% 0.025 65);
   --map-grid: oklch(30% 0.016 62 / 0.4);
   --map-door: oklch(78% 0.17 148 / 0.22);
@@ -638,6 +637,7 @@ th.num {
 .map-grid {
   position: relative;
   display: inline-block;
+  box-sizing: content-box;
   background: var(--map-bg);
   border: 1px solid var(--border);
   border-radius: var(--r-2);
@@ -654,7 +654,7 @@ th.num {
   position: absolute;
 }
 .map-tile.floor:hover {
-  background: var(--map-floor-hover);
+  background: color-mix(in oklab, var(--cream) 40%, transparent);
   cursor: pointer;
 }
 .map-tile.storage {
