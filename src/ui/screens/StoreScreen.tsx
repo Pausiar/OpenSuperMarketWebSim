@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { dayOf } from "../../core/time";
 import {
   EQUIPMENT,
@@ -25,6 +25,14 @@ import {
 } from "../../domain/storeOps";
 import { Badge, Card, ErrorBox, Stat } from "../components";
 import { money, pct } from "../format";
+import {
+  BROKEN_OVERLAY,
+  CHECKOUT_SCREEN,
+  drawSprite,
+  spriteFor,
+  tileSprite,
+  TILE as TILE_SRC,
+} from "../storeview/pixel";
 import { StoreCanvas } from "../storeview/StoreCanvas";
 import { useGame } from "../useGame";
 import {
@@ -40,12 +48,92 @@ import {
 
 type MapView = "live" | "edit";
 
-const TYPE_LABEL: Record<EquipmentType, string> = {
-  shelf: "EST",
-  fridge: "NEV",
-  freezer: "CONG",
-  checkout: "CAJA",
-};
+const SCALE = 2;
+const TILE_PX = TILE_SRC * SCALE;
+
+function getCtx(c: HTMLCanvasElement | null): CanvasRenderingContext2D | null {
+  try {
+    return c?.getContext("2d") ?? null;
+  } catch {
+    return null;
+  }
+}
+
+/** Terreno estático: suelo, paredes y puerta con los sprites de la vista en vivo. */
+function TerrainCanvas(props: {
+  w: number;
+  h: number;
+  isDoor: (x: number, y: number) => boolean;
+}) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  const { w, h, isDoor } = props;
+  useEffect(() => {
+    const ctx = getCtx(ref.current);
+    if (!ctx) return;
+    for (let y = 0; y < h; y++)
+      for (let x = 0; x < w; x++) {
+        let key: string;
+        let rows;
+        if (isDoor(x, y)) {
+          key = "door";
+          rows = tileSprite("door");
+        } else if (x === 0 || y === 0 || x === w - 1 || y === h - 1) {
+          const corner = (x === 0 || x === w - 1) && (y === 0 || y === h - 1);
+          key = corner ? "wallCorner" : "wall";
+          rows = tileSprite(corner ? "wallCorner" : "wall");
+        } else {
+          const v = (x * 3 + y * 5) % 2;
+          key = `floor${v}`;
+          rows = tileSprite("floor", v);
+        }
+        drawSprite(ctx, `t:${key}`, rows, x * TILE_PX, y * TILE_PX, SCALE);
+      }
+  }, [w, h, isDoor]);
+  return (
+    <canvas
+      ref={ref}
+      aria-hidden="true"
+      className="map-canvas"
+      width={w * TILE_PX}
+      height={h * TILE_PX}
+    />
+  );
+}
+
+/** Pieza dibujada con su sprite en cada casilla de la huella (como en la vista en vivo). */
+function PieceCanvas(props: {
+  type: EquipmentType;
+  equipmentId: string;
+  fp: { w: number; h: number };
+  broken: boolean;
+}) {
+  const ref = useRef<HTMLCanvasElement>(null);
+  const { type, equipmentId, fp, broken } = props;
+  useEffect(() => {
+    const ctx = getCtx(ref.current);
+    if (!ctx) return;
+    const rows = spriteFor(type, equipmentId);
+    for (let i = 0; i < fp.w; i++)
+      for (let j = 0; j < fp.h; j++) {
+        const x = i * TILE_PX;
+        const y = j * TILE_PX;
+        drawSprite(ctx, `e:${type}:${equipmentId}`, rows, x, y, SCALE);
+        if (type === "checkout" && i === 0 && j === 0 && !broken)
+          drawSprite(ctx, "e:screen", CHECKOUT_SCREEN, x, y, SCALE);
+        if (broken)
+          drawSprite(ctx, "e:broken0", BROKEN_OVERLAY[0], x, y, SCALE);
+      }
+  }, [type, equipmentId, fp.w, fp.h, broken]);
+  return (
+    <canvas
+      ref={ref}
+      aria-hidden="true"
+      className="map-canvas"
+      width={fp.w * TILE_PX}
+      height={fp.h * TILE_PX}
+    />
+  );
+}
 
 export function StoreScreen() {
   const { state, run } = useGame();
@@ -292,7 +380,7 @@ function MapEditor(props: { onError: (e: string | null) => void }) {
   const [note, setNote] = useState("");
   const dragRef = useRef<DragState | null>(null);
   const gridRef = useRef<HTMLDivElement>(null);
-  const TILE = 30;
+  const TILE = TILE_PX;
   const map = state.map;
   const door = doorTiles(map);
 
@@ -300,6 +388,12 @@ function MapEditor(props: { onError: (e: string | null) => void }) {
     map.placements.find((p) => p.equipmentId === selectedId) ?? null;
   const selectedEq = state.store.equipment.find((e) => e.id === selectedId);
 
+  const isDoor = useCallback(
+    (x: number, y: number) =>
+      y === map.h - 1 &&
+      (x === Math.floor(map.w / 2) - 1 || x === Math.floor(map.w / 2)),
+    [map.w, map.h],
+  );
   const tileClass = (x: number, y: number): string => {
     if (door.some((d) => d.x === x && d.y === y)) return "door";
     if (x === 0 || y === 0 || x === map.w - 1 || y === map.h - 1) return "wall";
@@ -502,6 +596,7 @@ function MapEditor(props: { onError: (e: string | null) => void }) {
           className="map-grid"
           style={{ width: map.w * TILE, height: map.h * TILE }}
         >
+          <TerrainCanvas w={map.w} h={map.h} isDoor={isDoor} />
           {Array.from({ length: map.h }, (_, y) =>
             Array.from({ length: map.w }, (_, x) => (
               <div
@@ -533,10 +628,10 @@ function MapEditor(props: { onError: (e: string | null) => void }) {
                 aria-label={`${EQUIPMENT_MAP[eq.type].name} en columna ${p.x + 1}, fila ${p.y + 1}`}
                 className={`map-obj ${eq.type} ${p.equipmentId === selectedId ? "selected" : ""} ${eq.broken ? "broken" : ""} ${dragging ? "dragging" : ""}`}
                 style={{
-                  left: p.x * TILE + 2,
-                  top: p.y * TILE + 2,
-                  width: fp.w * TILE - 4,
-                  height: fp.h * TILE - 4,
+                  left: p.x * TILE,
+                  top: p.y * TILE,
+                  width: fp.w * TILE,
+                  height: fp.h * TILE,
                 }}
                 onPointerDown={(e) => onPiecePointerDown(e, p, eq.type)}
                 onPointerMove={onPiecePointerMove}
@@ -545,7 +640,12 @@ function MapEditor(props: { onError: (e: string | null) => void }) {
                 onKeyDown={(e) => onPieceKeyDown(e, p)}
                 title={EQUIPMENT_MAP[eq.type].name}
               >
-                {TYPE_LABEL[eq.type]}
+                <PieceCanvas
+                  type={eq.type}
+                  equipmentId={eq.id}
+                  fp={fp}
+                  broken={eq.broken}
+                />
               </div>
             );
           })}
@@ -555,13 +655,18 @@ function MapEditor(props: { onError: (e: string | null) => void }) {
               data-testid="map-ghost"
               className={`map-obj map-ghost ${drag.type} ${drag.valid ? "ok" : "bad"}`}
               style={{
-                left: drag.target.x * TILE + 2,
-                top: drag.target.y * TILE + 2,
-                width: ghostFp.w * TILE - 4,
-                height: ghostFp.h * TILE - 4,
+                left: drag.target.x * TILE,
+                top: drag.target.y * TILE,
+                width: ghostFp.w * TILE,
+                height: ghostFp.h * TILE,
               }}
             >
-              {TYPE_LABEL[drag.type]}
+              <PieceCanvas
+                type={drag.type}
+                equipmentId={drag.id}
+                fp={ghostFp}
+                broken={false}
+              />
             </div>
           )}
         </div>

@@ -450,9 +450,9 @@
     "semantic_hash": ""
   },
   "src/ui/screens/StoreScreen.tsx": {
-    "mtime": 1794188143.2618022,
-    "seen": 1794188225.3935673,
-    "ast_hash": "776640a9e821d1ada94f17fa920f378d",
+    "mtime": 1794188647.4893548,
+    "seen": 1794188702.5065794,
+    "ast_hash": "d26575fb75f5b7e7e877dafa1f587fce",
     "semantic_hash": ""
   },
   "src/ui/screens/SuppliersScreen.tsx": {
@@ -2469,12 +2469,6 @@
     "mtime": 1794188107.807301,
     "seen": 1794188139.4125688,
     "ast_hash": "dc6aa2ce0a4e0cd2ff3cf4cc0065e50d",
-    "semantic_hash": ""
-  },
-  "drag-valid.png": {
-    "mtime": 1794188181.9033053,
-    "seen": 1794188225.3939958,
-    "ast_hash": "f829ee1d4dd725acb2cb4337202a2edc",
     "semantic_hash": ""
   },
   "package-lock.json": {
