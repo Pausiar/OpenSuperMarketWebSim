@@ -1,8 +1,8 @@
-import { useEffect, useRef, useState } from 'react';
-import { deleteGame, listSaves } from '../persistence/saveRepo';
-import { useGameStore } from '../state/gameStore';
-import { Card, ErrorBox } from './components';
-import { money } from './format';
+import { useEffect, useRef, useState } from "react";
+import { deleteGame, listSaves } from "../persistence/saveRepo";
+import { useGameStore } from "../state/gameStore";
+import { Card, ErrorBox } from "./components";
+import { money } from "./format";
 import {
   TILE,
   cashierSprite,
@@ -12,8 +12,8 @@ import {
   stockerSprite,
   tileSprite,
   type SpriteMap,
-} from './storeview/pixel';
-import './menu.css';
+} from "./storeview/pixel";
+import "./menu.css";
 
 /** Escaparate estático: 6 x 4 casillas, escala entera para que el pixel-art quede nítido. */
 const COLS = 6;
@@ -37,35 +37,67 @@ function storefrontPieces(): Piece[] {
         const door = col === 2;
         pieces.push(
           door
-            ? { key: 'door', rows: tileSprite('door'), col, row }
-            : { key: 'wall', rows: tileSprite('wall'), col, row },
+            ? { key: "door", rows: tileSprite("door"), col, row }
+            : { key: "wall", rows: tileSprite("wall"), col, row },
         );
       } else {
         const v = (col + row) % 2;
-        pieces.push({ key: `floor${v}`, rows: tileSprite('floor', v), col, row });
+        pieces.push({
+          key: `floor${v}`,
+          rows: tileSprite("floor", v),
+          col,
+          row,
+        });
       }
     }
   }
   // Estanterías, nevera y congelador contra la pared.
-  pieces.push({ key: 'fridge', rows: spriteFor('fridge'), col: 0, row: 1 });
-  pieces.push({ key: 'freezer', rows: spriteFor('freezer'), col: 5, row: 1 });
+  pieces.push({ key: "fridge", rows: spriteFor("fridge"), col: 0, row: 1 });
+  pieces.push({ key: "freezer", rows: spriteFor("freezer"), col: 5, row: 1 });
   for (const col of [1, 2, 3, 4]) {
     const id = `menu-shelf-${col}`;
-    pieces.push({ key: id, rows: spriteFor('shelf', id), col, row: 1 });
+    pieces.push({ key: id, rows: spriteFor("shelf", id), col, row: 1 });
   }
   // Personal y clientes sobre el suelo; la caja al fondo.
-  pieces.push({ key: 'customer-a', rows: customerSprite(1, 'down', 0), col: 1, row: 2 });
-  pieces.push({ key: 'stocker', rows: stockerSprite('right', 0), col: 3, row: 2 });
-  pieces.push({ key: 'cashier', rows: cashierSprite('down', 0), col: 4, row: 2 });
-  pieces.push({ key: 'customer-b', rows: customerSprite(3, 'left', 0), col: 5, row: 2 });
-  pieces.push({ key: 'checkout', rows: spriteFor('checkout'), col: 4, row: 3 });
+  pieces.push({
+    key: "customer-a",
+    rows: customerSprite(1, "down", 0),
+    col: 1,
+    row: 2,
+  });
+  pieces.push({
+    key: "stocker",
+    rows: stockerSprite("right", 0),
+    col: 3,
+    row: 2,
+  });
+  pieces.push({
+    key: "cashier",
+    rows: cashierSprite("down", 0),
+    col: 4,
+    row: 2,
+  });
+  pieces.push({
+    key: "customer-b",
+    rows: customerSprite(3, "left", 0),
+    col: 5,
+    row: 2,
+  });
+  pieces.push({ key: "checkout", rows: spriteFor("checkout"), col: 4, row: 3 });
   return pieces;
 }
 
 function drawStorefront(ctx: CanvasRenderingContext2D) {
   ctx.clearRect(0, 0, STAGE_W, STAGE_H);
   for (const p of storefrontPieces()) {
-    drawSprite(ctx, `menu:${p.key}`, p.rows, p.col * TILE * SCALE, p.row * TILE * SCALE, SCALE);
+    drawSprite(
+      ctx,
+      `menu:${p.key}`,
+      p.rows,
+      p.col * TILE * SCALE,
+      p.row * TILE * SCALE,
+      SCALE,
+    );
   }
 }
 
@@ -74,13 +106,18 @@ function Storefront() {
 
   useEffect(() => {
     // Sin canvas (SSR, pruebas o navegadores antiguos) el escaparate simplemente no se dibuja.
-    const ctx = canvasRef.current?.getContext('2d') ?? null;
+    const ctx = canvasRef.current?.getContext("2d") ?? null;
     if (ctx) drawStorefront(ctx);
   }, []);
 
   return (
     <div className="menu-stage" aria-hidden="true">
-      <canvas ref={canvasRef} width={STAGE_W} height={STAGE_H} className="menu-canvas" />
+      <canvas
+        ref={canvasRef}
+        width={STAGE_W}
+        height={STAGE_H}
+        className="menu-canvas"
+      />
     </div>
   );
 }
@@ -88,7 +125,7 @@ function Storefront() {
 export function MainMenu() {
   const newGame = useGameStore((s) => s.newGame);
   const loadGame = useGameStore((s) => s.loadGame);
-  const [name, setName] = useState('');
+  const [name, setName] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [, forceRefresh] = useState(0);
 
@@ -101,7 +138,10 @@ export function MainMenu() {
 
         <div className="menu-title">
           <h1>Supermarket Tycoon</h1>
-          <p>Gestiona tu supermercado: compras, precios, personal, facturas y expansión.</p>
+          <p>
+            Gestiona tu supermercado: compras, precios, personal, facturas y
+            expansión.
+          </p>
         </div>
 
         <Card title="Nueva partida">
@@ -112,14 +152,15 @@ export function MainMenu() {
               value={name}
               maxLength={40}
               onChange={(e) => setName(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && newGame(name)}
+              onKeyDown={(e) => e.key === "Enter" && newGame(name)}
             />
             <button className="primary" onClick={() => newGame(name)}>
               Empezar
             </button>
           </div>
           <small className="dim">
-            Empiezas con 25.000 €, una tienda pequeña, 3 empleados y stock inicial.
+            Empiezas con 25.000 €, una tienda pequeña, 3 empleados y stock
+            inicial.
           </small>
         </Card>
 
@@ -135,8 +176,14 @@ export function MainMenu() {
                 <div className="save-info">
                   <strong>{s.name}</strong>
                   <div className="dim save-meta">
-                    Día {s.day + 1} · Nivel {s.level} · {money(s.balanceCents)} ·{' '}
-                    {new Date(s.savedAt).toLocaleString('es-ES')} · Guardado v{s.saveVersion ?? 1}
+                    <span>
+                      Día {s.day + 1}, nivel {s.level}
+                    </span>
+                    <span>{money(s.balanceCents)}</span>
+                    <span>
+                      {new Date(s.savedAt).toLocaleString("es-ES")} (v
+                      {s.saveVersion ?? 1})
+                    </span>
                   </div>
                 </div>
                 <div className="save-actions">
