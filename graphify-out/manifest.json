@@ -318,9 +318,9 @@
     "semantic_hash": ""
   },
   "src/sim/customerSystem.ts": {
-    "mtime": 1794173957.587941,
-    "seen": 1794173991.943336,
-    "ast_hash": "f765ff5ccabbb144f53861007bd2b262",
+    "mtime": 1794188124.8953042,
+    "seen": 1794188139.4124968,
+    "ast_hash": "da47b921dd924246ca6002aaf8012352",
     "semantic_hash": ""
   },
   "src/sim/deliverySystem.ts": {
@@ -384,9 +384,9 @@
     "semantic_hash": ""
   },
   "src/ui/MainMenu.tsx": {
-    "mtime": 1794181822.4370732,
-    "seen": 1794181825.8562262,
-    "ast_hash": "6854f186ec5b4d4ee8c597b52e8084ff",
+    "mtime": 1794184294.5461965,
+    "seen": 1794188139.412534,
+    "ast_hash": "19d3b24ad2f01a545f4cfea7db841dfb",
     "semantic_hash": ""
   },
   "src/ui/components.tsx": {
@@ -450,9 +450,9 @@
     "semantic_hash": ""
   },
   "src/ui/screens/StoreScreen.tsx": {
-    "mtime": 1794182446.7011104,
-    "seen": 1794182459.3125029,
-    "ast_hash": "64135d5d3f4f4165ef839b214ba59770",
+    "mtime": 1794188143.2618022,
+    "seen": 1794188225.3935673,
+    "ast_hash": "776640a9e821d1ada94f17fa920f378d",
     "semantic_hash": ""
   },
   "src/ui/screens/SuppliersScreen.tsx": {
@@ -2358,9 +2358,9 @@
     "semantic_hash": ""
   },
   "src/sim/customerSystem.test.ts": {
-    "mtime": 1794174039.797649,
-    "seen": 1794174445.9997072,
-    "ast_hash": "8a0d86069fca5edd6801c189e0b2be06",
+    "mtime": 1794188124.8956344,
+    "seen": 1794188139.4124937,
+    "ast_hash": "5be75fe9eea787ff7f1dfe7f8091a990",
     "semantic_hash": ""
   },
   "src/sim/eventSystem.test.ts": {
@@ -2400,15 +2400,15 @@
     "semantic_hash": ""
   },
   "src/ui/storeview/agents.test.ts": {
-    "mtime": 1794174124.0482855,
-    "seen": 1794174445.999749,
-    "ast_hash": "ab7a98eaddc7c6fd9f48c9d96c3fb85f",
+    "mtime": 1794188116.633381,
+    "seen": 1794188139.4125745,
+    "ast_hash": "f926eb4c21a2f5f37fd0ce2197aae925",
     "semantic_hash": ""
   },
   "src/ui/storeview/agents.ts": {
-    "mtime": 1794174150.3309543,
-    "seen": 1794174445.9997504,
-    "ast_hash": "e25bc9ef767cf94b5305091e22dbab72",
+    "mtime": 1794188116.6194527,
+    "seen": 1794188139.4125767,
+    "ast_hash": "67ac0acf7ec9a405095498a1fc9ad51a",
     "semantic_hash": ""
   },
   "src/ui/storeview/geometry.test.ts": {
@@ -2457,6 +2457,24 @@
     "mtime": 1794181705.8429148,
     "seen": 1794181714.3320606,
     "ast_hash": "ed1775f0a64c3b681face729b7b3163d",
+    "semantic_hash": ""
+  },
+  "src/ui/screens/mapDrag.test.ts": {
+    "mtime": 1794188111.7802544,
+    "seen": 1794188139.412567,
+    "ast_hash": "d9eb292cb287b755ba3db69e53e8aedf",
+    "semantic_hash": ""
+  },
+  "src/ui/screens/mapDrag.ts": {
+    "mtime": 1794188107.807301,
+    "seen": 1794188139.4125688,
+    "ast_hash": "dc6aa2ce0a4e0cd2ff3cf4cc0065e50d",
+    "semantic_hash": ""
+  },
+  "drag-valid.png": {
+    "mtime": 1794188181.9033053,
+    "seen": 1794188225.3939958,
+    "ast_hash": "f829ee1d4dd725acb2cb4337202a2edc",
     "semantic_hash": ""
   },
   "package-lock.json": {

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { dayOf } from "../../core/time";
 import {
   EQUIPMENT,
@@ -27,6 +27,16 @@ import { Badge, Card, ErrorBox, Stat } from "../components";
 import { money, pct } from "../format";
 import { StoreCanvas } from "../storeview/StoreCanvas";
 import { useGame } from "../useGame";
+import {
+  canMoveTo,
+  clampedTarget,
+  clampOffset,
+  footprintOf,
+  pointerToTile,
+  toggleRot,
+  type Rot,
+  type Tile,
+} from "./mapDrag";
 
 type MapView = "live" | "edit";
 
@@ -262,15 +272,33 @@ export function StoreScreen() {
   );
 }
 
+interface DragState {
+  id: string;
+  type: EquipmentType;
+  rot: Rot;
+  offset: Tile;
+  target: Tile;
+  valid: boolean;
+  startX: number;
+  startY: number;
+  moved: boolean;
+  wasSelected: boolean;
+}
+
 function MapEditor(props: { onError: (e: string | null) => void }) {
   const { state, run } = useGame();
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [drag, setDrag] = useState<DragState | null>(null);
+  const [note, setNote] = useState("");
+  const dragRef = useRef<DragState | null>(null);
+  const gridRef = useRef<HTMLDivElement>(null);
   const TILE = 30;
   const map = state.map;
   const door = doorTiles(map);
 
   const selectedPlacement =
     map.placements.find((p) => p.equipmentId === selectedId) ?? null;
+  const selectedEq = state.store.equipment.find((e) => e.id === selectedId);
 
   const tileClass = (x: number, y: number): string => {
     if (door.some((d) => d.x === x && d.y === y)) return "door";
@@ -285,40 +313,170 @@ function MapEditor(props: { onError: (e: string | null) => void }) {
     return "floor";
   };
 
+  const setDragBoth = (d: DragState | null) => {
+    dragRef.current = d;
+    setDrag(d);
+  };
+
+  /** Intenta colocar mediante el comando habitual y anuncia el resultado. */
+  const commit = (id: string, x: number, y: number, rot: Rot) => {
+    const err = run((ctx) => placeEquipment(ctx.state, id, x, y, rot));
+    props.onError(err);
+    setNote(err ?? `Pieza colocada en columna ${x + 1}, fila ${y + 1}.`);
+    return err === null;
+  };
+
   const onTileClick = (x: number, y: number) => {
     if (!selectedId || !selectedPlacement) return;
-    props.onError(
-      run((ctx) =>
-        placeEquipment(ctx.state, selectedId, x, y, selectedPlacement.rot),
-      ),
-    );
+    commit(selectedId, x, y, selectedPlacement.rot);
   };
 
   const rotate = () => {
     if (!selectedId || !selectedPlacement) return;
     const { x, y, rot } = selectedPlacement;
-    props.onError(
-      run((ctx) =>
-        placeEquipment(ctx.state, selectedId, x, y, rot === 0 ? 1 : 0),
-      ),
-    );
+    commit(selectedId, x, y, toggleRot(rot));
   };
+
+  const evaluate = (d: DragState, pointer: Tile, rot: Rot): DragState => {
+    const fp = footprintOf(d.type, rot);
+    const offset = clampOffset(d.offset, fp);
+    const target = clampedTarget(pointer, offset, fp, map);
+    return {
+      ...d,
+      rot,
+      offset,
+      target,
+      valid: canMoveTo(state, d.id, target.x, target.y, rot),
+    };
+  };
+
+  const pointerTile = (e: { clientX: number; clientY: number }): Tile => {
+    const r = gridRef.current!.getBoundingClientRect();
+    return pointerToTile(e.clientX, e.clientY, r, TILE);
+  };
+
+  const onPiecePointerDown = (
+    e: React.PointerEvent<HTMLDivElement>,
+    p: { equipmentId: string; x: number; y: number; rot: Rot },
+    type: EquipmentType,
+  ) => {
+    if (e.button !== 0 && e.pointerType === "mouse") return;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    const pt = pointerTile(e);
+    const base: DragState = {
+      id: p.equipmentId,
+      type,
+      rot: p.rot,
+      offset: { x: pt.x - p.x, y: pt.y - p.y },
+      target: { x: p.x, y: p.y },
+      valid: true,
+      startX: e.clientX,
+      startY: e.clientY,
+      moved: false,
+      wasSelected: p.equipmentId === selectedId,
+    };
+    setDragBoth(base);
+    setSelectedId(p.equipmentId);
+  };
+
+  const onPiecePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = dragRef.current;
+    if (!d) return;
+    const moved =
+      d.moved || Math.hypot(e.clientX - d.startX, e.clientY - d.startY) > 4;
+    if (!moved) return;
+    setDragBoth({ ...evaluate(d, pointerTile(e), d.rot), moved: true });
+  };
+
+  const onPiecePointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    const d = dragRef.current;
+    if (!d) return;
+    setDragBoth(null);
+    if (!d.moved) {
+      if (d.wasSelected) setSelectedId(null);
+      return;
+    }
+    const cur = evaluate(d, pointerTile(e), d.rot);
+    if (cur.valid) commit(cur.id, cur.target.x, cur.target.y, cur.rot);
+    else {
+      const msg = "No se puede colocar ahí. La pieza vuelve a su sitio.";
+      props.onError(msg);
+      setNote(msg);
+    }
+  };
+
+  const cancelDrag = () => {
+    if (!dragRef.current) return;
+    setDragBoth(null);
+    setNote("Movimiento cancelado.");
+  };
+
+  // Teclas durante el arrastre: R rota, Escape cancela.
+  useEffect(() => {
+    if (!drag) return;
+    const onKey = (e: KeyboardEvent) => {
+      const d = dragRef.current;
+      if (!d) return;
+      if (e.key === "Escape") {
+        e.preventDefault();
+        cancelDrag();
+      } else if (e.key === "r" || e.key === "R") {
+        e.preventDefault();
+        const anchor: Tile = {
+          x: d.target.x + d.offset.x,
+          y: d.target.y + d.offset.y,
+        };
+        setDragBoth({ ...evaluate(d, anchor, toggleRot(d.rot)), moved: true });
+      }
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [drag !== null]);
+
+  const onPieceKeyDown = (
+    e: React.KeyboardEvent<HTMLDivElement>,
+    p: { equipmentId: string; x: number; y: number; rot: Rot },
+  ) => {
+    const isSel = p.equipmentId === selectedId;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      setSelectedId(isSel ? null : p.equipmentId);
+      return;
+    }
+    if (!isSel) return;
+    const delta: Record<string, Tile> = {
+      ArrowLeft: { x: -1, y: 0 },
+      ArrowRight: { x: 1, y: 0 },
+      ArrowUp: { x: 0, y: -1 },
+      ArrowDown: { x: 0, y: 1 },
+    };
+    if (delta[e.key]) {
+      e.preventDefault();
+      commit(p.equipmentId, p.x + delta[e.key].x, p.y + delta[e.key].y, p.rot);
+    } else if (e.key === "r" || e.key === "R") {
+      e.preventDefault();
+      commit(p.equipmentId, p.x, p.y, toggleRot(p.rot));
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      setSelectedId(null);
+      setNote("Pieza deseleccionada.");
+    }
+  };
+
+  const ghostFp = drag ? footprintOf(drag.type, drag.rot) : null;
 
   return (
     <>
       <div className="row">
-        {selectedId ? (
+        {selectedEq ? (
           <>
             <Badge tone="blue">
-              Seleccionado:{" "}
-              {
-                EQUIPMENT_MAP[
-                  state.store.equipment.find((e) => e.id === selectedId)!.type
-                ].name
-              }
+              Seleccionado: {EQUIPMENT_MAP[selectedEq.type].name}
             </Badge>
             <span className="dim">
-              Haz clic en una casilla libre para moverlo.
+              Arrástralo o haz clic en una casilla libre. Teclado: flechas
+              mueven, R rota, Esc deselecciona.
             </span>
             <button className="small" onClick={rotate}>
               Rotar
@@ -329,13 +487,18 @@ function MapEditor(props: { onError: (e: string | null) => void }) {
           </>
         ) : (
           <span className="dim">
-            Haz clic en un objeto para seleccionarlo y moverlo o rotarlo.
+            Arrastra una pieza para moverla, o selecciónala con clic o
+            teclado.
           </span>
         )}
+      </div>
+      <div className="sr-only" role="status" aria-live="polite">
+        {note}
       </div>
 
       <div className="map-wrap">
         <div
+          ref={gridRef}
           className="map-grid"
           style={{ width: map.w * TILE, height: map.h * TILE }}
         >
@@ -360,27 +523,47 @@ function MapEditor(props: { onError: (e: string | null) => void }) {
             );
             if (!eq) return null;
             const fp = footprint(eq.type, p.rot);
+            const dragging = drag?.moved && drag.id === p.equipmentId;
             return (
               <div
                 key={p.equipmentId}
-                className={`map-obj ${eq.type} ${p.equipmentId === selectedId ? "selected" : ""} ${eq.broken ? "broken" : ""}`}
+                role="button"
+                tabIndex={0}
+                aria-pressed={p.equipmentId === selectedId}
+                aria-label={`${EQUIPMENT_MAP[eq.type].name} en columna ${p.x + 1}, fila ${p.y + 1}`}
+                className={`map-obj ${eq.type} ${p.equipmentId === selectedId ? "selected" : ""} ${eq.broken ? "broken" : ""} ${dragging ? "dragging" : ""}`}
                 style={{
                   left: p.x * TILE + 2,
                   top: p.y * TILE + 2,
                   width: fp.w * TILE - 4,
                   height: fp.h * TILE - 4,
                 }}
-                onClick={() =>
-                  setSelectedId(
-                    p.equipmentId === selectedId ? null : p.equipmentId,
-                  )
-                }
+                onPointerDown={(e) => onPiecePointerDown(e, p, eq.type)}
+                onPointerMove={onPiecePointerMove}
+                onPointerUp={onPiecePointerUp}
+                onPointerCancel={cancelDrag}
+                onKeyDown={(e) => onPieceKeyDown(e, p)}
                 title={EQUIPMENT_MAP[eq.type].name}
               >
                 {TYPE_LABEL[eq.type]}
               </div>
             );
           })}
+          {drag?.moved && ghostFp && (
+            <div
+              aria-hidden="true"
+              data-testid="map-ghost"
+              className={`map-obj map-ghost ${drag.type} ${drag.valid ? "ok" : "bad"}`}
+              style={{
+                left: drag.target.x * TILE + 2,
+                top: drag.target.y * TILE + 2,
+                width: ghostFp.w * TILE - 4,
+                height: ghostFp.h * TILE - 4,
+              }}
+            >
+              {TYPE_LABEL[drag.type]}
+            </div>
+          )}
         </div>
       </div>
 
